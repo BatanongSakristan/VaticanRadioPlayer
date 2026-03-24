@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vatican Radio Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: 'Roboto', sans-serif; background:#f5f5f5; color:#202124; display:flex; justify-content:center; padding:20px; background-color: #323232; }
+
+/* Player card */
+.player {
+  background:#1e1f26;
+  border-radius:20px;
+  width:100%;
+  max-width:700px; /* Wider UI */
+  padding:25px;
+  box-shadow:0 12px 32px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.player:hover { transform: translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,0.35); }
+
+/* Sound wave at top - enlarged */
+.sound-wave-container { display:flex; justify-content:center; margin-bottom:20px; }
+.sound-wave { display:flex; gap:8px; }
+.sound-wave div {
+  width:6px; background:#1a73e8; animation:wave 1s infinite ease-in-out; transform-origin:bottom;
+  border-radius:2px;
+}
+.sound-wave div:nth-child(1){ height:18px; animation-delay:0s; }
+.sound-wave div:nth-child(2){ height:26px; animation-delay:0.1s; }
+.sound-wave div:nth-child(3){ height:34px; animation-delay:0.2s; }
+.sound-wave div:nth-child(4){ height:22px; animation-delay:0.3s; }
+@keyframes wave { 0%,100% { transform:scaleY(0.4);} 50% { transform:scaleY(1);} }
+
+/* Logo */
+.logo { display:block; margin:0 auto 20px; width:180px; }
+
+/* Buttons with Material Icons */
+.button-group { display:flex; justify-content:center; gap:25px; margin-bottom:20px; }
+button {
+  background:#1a73e8; border:none; width:55px; height:55px; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:28px; color:white; transition:all 0.3s;
+}
+button:hover { background:#155ab6; transform:translateY(-2px); }
+button:active { transform:translateY(0); }
+
+/* Now playing */
+#nowPlaying { margin:10px 0 25px 0; font-weight:500; font-size:1.2em; color:#ffffff; text-align:center; }
+
+/* Schedule list */
+.schedule { margin-top:10px; max-height:500px; overflow-y:auto; padding-top:10px; }
+.item {
+  background:#2c2d36; border-radius:12px; padding:14px; margin-bottom:12px;
+  display:flex; align-items:center; gap:12px; transition: background 0.3s, transform 0.3s;
+  cursor:pointer; flex-wrap:wrap;
+}
+.item:hover { background:#3a3b49; transform:translateX(4px); }
+.item.active { background:#1a73e8; color:white; transform:scale(1.02); border-radius:12px; margin-bottom:12px padding:14px; }
+.time { font-size:0.9em; color:#cfcfcf; flex-shrink:0; width:110px; text-align:right; }
+
+/* Icon next to title */
+.item-icon { flex-shrink:0; font-size:20px; color:#1a73e8; }
+.title { color: #fff; }
+/* Scrollbar */
+.schedule::-webkit-scrollbar { width:8px; }
+.schedule::-webkit-scrollbar-thumb { background:#555; border-radius:4px; }
+.schedule::-webkit-scrollbar-thumb:hover { background:#777; }
+
+/* Mobile responsive */
+@media(max-width:768px){
+  .player { width:100%; padding:20px; }
+  .time { width:90px; font-size:0.8em; }
+  button { width:50px; height:50px; font-size:24px; }
+  .item-icon { font-size:18px; }
+}
+@media(max-width:480px){
+  .time { width:70px; font-size:0.75em; }
+  button { width:45px; height:45px; font-size:20px; }
+  .logo { width:150px; margin-bottom:15px; }
+  .item-icon { font-size:16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="player">
+
+  
+
+  <!-- Logo -->
+  <img src="https://www.vaticannews.va/etc/designs/vatican-news/release/library/main/images/rv/rv-esteso-bianco-small.png" alt="Vatican Radio" class="logo">
+
+	<!-- Sound wave on top -->
+  <div class="sound-wave-container">
+    <div class="sound-wave" id="wave">
+      <div></div><div></div><div></div><div></div>
+    </div>
+  </div>
+  
+  <!-- Play/pause icon buttons -->
+  <div class="button-group">
+    <button onclick="playRadio()"><span class="material-icons">play_arrow</span></button>
+    <button onclick="pauseRadio()"><span class="material-icons">pause</span></button>
+  </div>
+
+  <!-- Now Playing -->
+  <div id="nowPlaying">Loading schedule...</div>
+
+  <!-- Schedule -->
+  <div class="schedule" id="schedule"></div>
+  
+  <img src="https://www.vaticannews.va/etc/designs/vatican-news/release/library/main/images/rv/rv-esteso-bianco-small.png" alt="Vatican Radio" class="logo">
+</div>
+
+<audio id="audio" autoplay src="https://radio.vaticannews.va/stream-en"></audio>
+
+<script>
+const audio = document.getElementById("audio");
+const scheduleDiv = document.getElementById("schedule");
+const nowPlaying = document.getElementById("nowPlaying");
+const wave = document.getElementById("wave");
+// Play/pause functions
+function playRadio(){ audio.play(); wave.style.display="flex"; }
+function pauseRadio(){ audio.pause(); wave.style.display="none"; }
+
+window.onload = function() {
+    audio.play();
+}
+
+// Load schedule via CORS proxy
+async function loadSchedule(){
+  try{
+    const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
+    const res = await fetch(`https://api.allorigins.win/raw?url=${url}`);
+    const data = await res.json();
+
+    const combined = [...data.episodes, ...data.special];
+    combined.sort((a,b)=> new Date(a.startDate) - new Date(b.startDate));
+    renderSchedule(combined);
+
+  } catch(e){
+    scheduleDiv.innerHTML = "<div style='color:red;text-align:center;'>Failed to load schedule</div>";
+    console.error(e);
+  }
+}
+
+// Render schedule with Material Icons
+function renderSchedule(items){
+  scheduleDiv.innerHTML = "";
+  const now = new Date();
+  let currentItem = null;
+
+  items.forEach(item=>{
+    const start = new Date(item.startDate);
+    const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
+    const title = item.title || item.translate?.title || "No title";
+
+    // Determine icon based on rcsType or isSpecial
+    let icon = "music_note"; // default music
+    if(item.isSpecial || item.rcsType === "Link" || item.rcsType === "Special") icon = "article";
+
+    const div = document.createElement("div");
+    div.className="item";
+    div.innerHTML = `<span class="time">${formatTime(start)} - ${formatTime(end)}</span><span class="item-icon material-icons">${icon}</span><span class="title">${title}</span>`;
+
+    if(now >= start && now <= end){
+      div.classList.add("active");
+      currentItem = title;
+      setTimeout(()=> div.scrollIntoView({behavior:"smooth", block:"center"}),100);
+    }
+
+    scheduleDiv.appendChild(div);
+  });
+
+  nowPlaying.innerHTML = currentItem ? `Now Playing: ${currentItem}` : "No program currently playing";
+}
+
+function formatTime(date){
+  return date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+
+// Auto-refresh every 30 seconds
+setInterval(loadSchedule,30000);
+loadSchedule();
+</script>
+
+</body>
+</html>
