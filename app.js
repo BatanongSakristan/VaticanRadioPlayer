@@ -1,66 +1,74 @@
+const audio = document.getElementById("audio");
+const scheduleDiv = document.getElementById("schedule");
+const nowPlaying = document.getElementById("nowPlaying");
+const wave = document.getElementById("wave");
 
-}
+function playRadio(){ audio.play(); wave.style.display="flex"; }
+function pauseRadio(){ audio.pause(); wave.style.display="none"; }
 
-/* LOAD SCHEDULE (ENGLISH FIX) */
 async function loadSchedule(){
- try{
-  const url=encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
-  const res=await fetch(`https://api.allorigins.win/raw?url=${url}`);
-  const data=await res.json();
+  try{
+    const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
+    const res = await fetch(`https://api.allorigins.win/raw?url=${url}`);
+    const data = await res.json();
 
-  const combined=[...data.episodes,...data.special];
-  combined.sort((a,b)=>new Date(a.startDate)-new Date(b.startDate));
+    const combined = [...data.episodes, ...data.special];
+    combined.sort((a,b)=> new Date(a.startDate) - new Date(b.startDate));
 
-  renderSchedule(combined);
- }catch(e){
-  nowPlaying.innerText="Failed to load schedule";
- }
+    renderSchedule(combined);
+
+  } catch(e){
+    nowPlaying.innerHTML = "Failed to load schedule";
+  }
 }
 
 function renderSchedule(items){
- scheduleDiv.innerHTML="";
- const now=new Date();
- let current=null;
+  scheduleDiv.innerHTML="";
+  const now = new Date();
+  let currentItem=null;
 
- items.forEach(item=>{
-  const start=new Date(item.startDate);
-  const end=item.endDate?new Date(item.endDate):new Date(start.getTime()+(item.duration*1000));
+  items.forEach(item=>{
+    const start = new Date(item.startDate);
+    const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
 
-  let title=item.titleFromProgram || item.title || "No title";
+    let title = item.titleFromProgram || item.title || "No title";
 
-  if(item.rcsType==="Song"){
-   title += " - " + (item.artist || "Unknown Artist");
-  }
+    // ADD ARTIST ONLY IF SONG
+    if(item.rcsType === "Song"){
+      const artist = item.artist || "Unknown Artist";
+      title += ` - ${artist}`;
+    }
 
-  if(item.descriptionFromProgram){
-   title += " (" + item.descriptionFromProgram + ")";
-  }
+    // ADD DESCRIPTION
+    if(item.descriptionFromProgram){
+      title += ` (${item.descriptionFromProgram})`;
+    }
 
-  const div=document.createElement("div");
-  div.className="item";
+    const div = document.createElement("div");
+    div.className="item";
 
-  if(item.isSpecial) div.classList.add("special");
+    // SPECIAL STYLE
+    if(item.isSpecial) div.classList.add("special");
 
-  div.innerHTML=`<span class="time">${formatTime(start)} - ${formatTime(end)}</span>${title}`;
+    div.innerHTML = `
+      <span class="time">${formatTime(start)} - ${formatTime(end)}</span>
+      <span class="title">${title}</span>
+    `;
 
-  if(now>=start && now<=end){
-   current=title;
-  }
+    if(now>=start && now<=end){
+      div.classList.add("active");
+      currentItem=title;
+    }
 
-  scheduleDiv.appendChild(div);
- });
+    scheduleDiv.appendChild(div);
+  });
 
- nowPlaying.innerText=current?"Now Playing: "+current:"No program playing";
+  nowPlaying.innerHTML = currentItem ? "Now Playing: " + currentItem : "No program playing";
 }
 
 function formatTime(date){
- return date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  return date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 }
 
 setInterval(loadSchedule,30000);
 loadSchedule();
-
-/* PWA */
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register('sw.js');
-}

@@ -3,44 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VRP Radio Player</title>
+<title>Vatican Radio Player - Batan-ong Sakristan</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+<link href="style.css" rel="stylesheet">
 </head>
+
 <body>
 
 <div class="player">
 
-<div class="toggle" onclick="toggleTheme()">
-<span class="material-icons">dark_mode</span>
+<img src="https://www.vaticannews.va/etc/designs/vatican-news/release/library/main/images/rv/rv-esteso-bianco-small.png" class="logo"><br><br>
+
+<div class="sound-wave-container">
+  <div class="sound-wave" id="wave">
+    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+  </div>
 </div>
 
-<img src="https://www.vaticannews.va/etc/designs/vatican-news/release/library/main/images/rv/rv-esteso-bianco-small.png" class="logo">
-
-<div class="controls">
-<button class="btn primary" onclick="playRadio()"><span class="material-icons">play_arrow</span></button>
-<button class="btn" onclick="pauseRadio()"><span class="material-icons">pause</span></button>
-<button class="btn" onclick="muteToggle()"><span class="material-icons" id="muteIcon">volume_up</span></button>
-</div>
-
-<div class="volume-wrap">
-<span class="material-icons" id="volIcon">volume_up</span>
-<input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+<div class="button-group">
+  <button onclick="playRadio()"><span class="material-icons">play_arrow</span></button>
+  <button onclick="pauseRadio()"><span class="material-icons">pause</span></button>
 </div>
 
 <div id="nowPlaying">Loading...</div>
-<div id="schedule" class="schedule"></div>
+
+<div class="schedule" id="schedule"></div><br><br>
 
 <img src="logo.png" class="logo">
-<div class="footer">© 2026 Batan-ong Sakristan | VRP v1.1</div>
+
+<div class="footer">
+  © 2026 Batan-ong Sakristan | VaticanRadioPlayer <span class="version">v1.0.0</span>
+</div>
 
 </div>
 
-<audio id="audio" src="https://radio.vaticannews.va/stream-en" crossorigin="anonymous"></audio>
-
+<audio id="audio" autoplay src="https://radio.vaticannews.va/stream-en"></audio>
 <script src="app.js"></script>
+<script src="sw.js"></script>
+
 </body>
 </html>
