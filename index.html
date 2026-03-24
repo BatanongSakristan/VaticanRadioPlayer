@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vatican Radio Player - Batan-ong Sakristan</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
 
@@ -14,7 +14,7 @@ body {
     background-repeat: no-repeat; /* Prevents the image from tiling */
     background-size: cover; /* Scales the image to cover the entire page */
     background-attachment: fixed; /* Keeps the background fixed when scrolling */
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Montserrat', sans-serif;
 	color:#202124; 
 	display:flex; 
 	justify-content:center; 
@@ -91,6 +91,9 @@ button:active { transform:translateY(0); }
   button { width:45px; height:45px; font-size:20px; }
   .logo { width:150px; margin-bottom:15px; }
   .item-icon { font-size:16px; }
+}
+.title-nowplaying {
+	color: #8d8f8e;
 }
 </style>
 </head>
@@ -186,7 +189,7 @@ function renderSchedule(items){
     scheduleDiv.appendChild(div);
   });
 
-  nowPlaying.innerHTML = currentItem ? `Now Playing: ${currentItem}` : "No program currently playing";
+  nowPlaying.innerHTML = currentItem ? `Now Playing: <span class='title-nowplaying'>${currentItem}</span>` : "No program currently playing";
 }
 
 function formatTime(date){
