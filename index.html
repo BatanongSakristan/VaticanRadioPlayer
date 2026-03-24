@@ -4,131 +4,224 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VRP Radio Player</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
 :root{
-  --bg: rgba(20,30,60,0.6);
+  --bg: rgba(20,30,60,0.55);
   --text:#fff;
+  --accent:#1a73e8;
 }
 body{
-  font-family:Montserrat;
+  font-family:Montserrat, system-ui, -apple-system, Segoe UI, Roboto;
   background:url("background.png") center/cover fixed;
   display:flex;justify-content:center;padding:20px;
 }
 .player{
-  width:100%;max-width:820px;padding:25px;border-radius:20px;
+  width:100%;max-width:820px;padding:24px;border-radius:22px;
   background:var(--bg);
   backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
   color:var(--text);
-}
-.logo{display:block;margin:auto;width:160px;}
-
-/* Gradient glass items */
-.item{
-  margin:10px 0;padding:12px;border-radius:12px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid transparent;
-  background-clip:padding-box;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
   position:relative;
 }
-.item::before{
-  content:"";
-  position:absolute;inset:0;
-  border-radius:12px;
-  padding:1px;
-  background:linear-gradient(120deg,#1a73e8,#00c6ff);
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;
+.logo{display:block;margin:0 auto 10px;width:160px;}
+
+/* Frosted glass buttons */
+.btn{
+  width:52px;height:52px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.25s ease;
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,0,0,.25);} 
+.btn:active{transform:translateY(0);} 
+.btn.primary{background:linear-gradient(135deg, rgba(26,115,232,.7), rgba(0,198,255,.6)); border-color:transparent;}
+
+.controls{display:flex;justify-content:center;gap:14px;margin:14px 0 10px;}
+
+/* Modern volume control */
+.volume-wrap{
+  display:flex;align-items:center;gap:10px;margin:8px 0 14px;
+  padding:10px 12px;border-radius:14px;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(10px);
+}
+.volume-icon{cursor:pointer; user-select:none;}
+#volume{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:6px;border-radius:999px;outline:none;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--accent) var(--val,100%), rgba(255,255,255,0.25) var(--val,100%));
+}
+#volume::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;border:2px solid var(--accent);
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+#volume::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;border:2px solid var(--accent);
 }
 
-.controls{display:flex;justify-content:center;gap:15px;margin:15px 0;}
-button{width:50px;height:50px;border-radius:50%;border:none;background:#1a73e8;color:#fff;}
+/* Schedule */
+.schedule{max-height:420px;overflow:auto;margin-top:10px;}
+.item{
+  margin:10px 0;padding:12px;border-radius:14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid transparent; position:relative;
+}
+.item::before{
+  content:""; position:absolute; inset:0; border-radius:14px; padding:1px;
+  background:linear-gradient(120deg,#1a73e8,#00c6ff);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor; pointer-events:none;
+}
+.item.special{background:linear-gradient(135deg,#d4af37,#ffd700); color:#000;}
+.time{font-size:12px;color:#bfc7d6;display:block;margin-bottom:4px;}
 
-#volume{width:100%;}
+#nowPlaying{margin-top:6px;text-align:center;font-weight:500;}
 
-.footer{text-align:center;margin-top:10px;font-size:12px;color:#ccc;}
+.footer{text-align:center;margin-top:12px;font-size:12px;color:#c9d2ff;opacity:.9}
+.toggle{position:absolute;top:12px;right:12px;cursor:pointer;opacity:.9}
 
-.toggle{position:absolute;top:10px;right:10px;cursor:pointer;}
-
+@media(max-width:600px){
+  .btn{width:46px;height:46px}
+}
 </style>
 </head>
 <body>
 
 <div class="player">
+  <div class="toggle" onclick="toggleTheme()"><span class="material-icons">dark_mode</span></div>
 
-<div class="toggle" onclick="toggleTheme()">
-<span class="material-icons">dark_mode</span>
-</div>
+  <img src="https://www.vaticannews.va/etc/designs/vatican-news/release/library/main/images/rv/rv-esteso-bianco-small.png" class="logo">
 
-<img src="https://www.vaticannews.va/etc/designs/vatican-news/release/library/main/images/rv/rv-esteso-bianco-small.png" class="logo">
+  <div class="controls">
+    <button class="btn primary" onclick="playRadio()"><span class="material-icons">play_arrow</span></button>
+    <button class="btn" onclick="pauseRadio()"><span class="material-icons">pause</span></button>
+    <button class="btn" id="muteBtn" onclick="muteToggle()"><span class="material-icons">volume_up</span></button>
+  </div>
 
-<div class="controls">
-<button onclick="playRadio()"><span class="material-icons">play_arrow</span></button>
-<button onclick="pauseRadio()"><span class="material-icons">pause</span></button>
-<button onclick="muteToggle()"><span class="material-icons">volume_off</span></button>
-</div>
+  <div class="volume-wrap">
+    <span class="material-icons volume-icon" id="volIcon" onclick="muteToggle()">volume_up</span>
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+  </div>
 
-<input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+  <div id="nowPlaying">Loading...</div>
+  <div class="schedule" id="schedule"></div>
 
-<div id="nowPlaying">Loading...</div>
-<div id="schedule"></div>
-
-<img src="logo.png" class="logo">
-<div class="footer">© 2026 Batan-ong Sakristan | VRP v1.0</div>
-
+  <img src="logo.png" class="logo">
+  <div class="footer">© 2026 Batan-ong Sakristan | VRP v1.0</div>
 </div>
 
 <audio id="audio" src="https://radio.vaticannews.va/stream-en" crossorigin="anonymous"></audio>
 
 <script>
-const audio=document.getElementById("audio");
-const vol=document.getElementById("volume");
+const audio=document.getElementById('audio');
+const vol=document.getElementById('volume');
+const volIcon=document.getElementById('volIcon');
+const muteBtn=document.getElementById('muteBtn');
+const scheduleDiv=document.getElementById('schedule');
+const nowPlaying=document.getElementById('nowPlaying');
 
-function playRadio(){audio.play();}
-function pauseRadio(){audio.pause();}
-function muteToggle(){audio.muted=!audio.muted;}
+function playRadio(){ audio.play(); ctx.resume(); }
+function pauseRadio(){ audio.pause(); }
 
-vol.oninput=()=>audio.volume=vol.value;
+function setVolUI(v){
+  const pct = Math.round(v*100)+'%';
+  vol.style.setProperty('--val', pct);
+  if(audio.muted || v===0){
+    volIcon.textContent='volume_off';
+    muteBtn.querySelector('.material-icons').textContent='volume_off';
+  } else if(v<0.5){
+    volIcon.textContent='volume_down';
+    muteBtn.querySelector('.material-icons').textContent='volume_down';
+  } else {
+    volIcon.textContent='volume_up';
+    muteBtn.querySelector('.material-icons').textContent='volume_up';
+  }
+}
+
+function muteToggle(){
+  audio.muted = !audio.muted;
+  setVolUI(audio.muted ? 0 : audio.volume);
+}
+
+vol.addEventListener('input', ()=>{
+  audio.muted=false;
+  audio.volume = parseFloat(vol.value);
+  setVolUI(audio.volume);
+});
+setVolUI(1);
 
 /* Offline detect */
-audio.addEventListener("error",()=>{
- document.getElementById("nowPlaying").innerText="Stream Offline";
-});
+audio.addEventListener('error',()=>{ nowPlaying.innerText='Stream Offline'; });
 
 /* Theme toggle */
 function toggleTheme(){
- const root=document.documentElement;
- if(root.style.getPropertyValue('--bg')==='white'){
-  root.style.setProperty('--bg','rgba(20,30,60,0.6)');
-  root.style.setProperty('--text','#fff');
- }else{
-  root.style.setProperty('--bg','white');
-  root.style.setProperty('--text','#000');
- }
+  const root=document.documentElement;
+  if(getComputedStyle(root).getPropertyValue('--bg').includes('255')){
+    root.style.setProperty('--bg','rgba(20,30,60,0.55)');
+    root.style.setProperty('--text','#fff');
+  }else{
+    root.style.setProperty('--bg','rgba(255,255,255,0.8)');
+    root.style.setProperty('--text','#000');
+  }
 }
 
 /* Equalizer */
 const ctx=new (window.AudioContext||window.webkitAudioContext)();
 const src=ctx.createMediaElementSource(audio);
 const analyser=ctx.createAnalyser();
-src.connect(analyser);
-analyser.connect(ctx.destination);
-
+src.connect(analyser); analyser.connect(ctx.destination);
 const data=new Uint8Array(analyser.frequencyBinCount);
+(function draw(){ analyser.getByteFrequencyData(data); requestAnimationFrame(draw); })();
 
-function draw(){
- analyser.getByteFrequencyData(data);
- requestAnimationFrame(draw);
+/* Schedule */
+async function loadSchedule(){
+ try{
+  const url=encodeURIComponent('https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json');
+  const res=await fetch(`https://api.allorigins.win/raw?url=${url}`);
+  const data=await res.json();
+  const combined=[...data.episodes,...data.special];
+  combined.sort((a,b)=>new Date(a.startDate)-new Date(b.startDate));
+  renderSchedule(combined);
+ }catch(e){ nowPlaying.innerText='Failed to load schedule'; }
 }
-draw();
+
+function renderSchedule(items){
+ scheduleDiv.innerHTML='';
+ const now=new Date(); let current=null;
+ items.forEach(item=>{
+  const start=new Date(item.startDate);
+  const end=item.endDate?new Date(item.endDate):new Date(start.getTime()+(item.duration*1000));
+  let title=item.titleFromProgram||item.title||'No title';
+  if(item.rcsType==='Song') title+=` - ${item.artist||'Unknown'}`;
+  if(item.descriptionFromProgram) title+=` (${item.descriptionFromProgram})`;
+  const div=document.createElement('div');
+  div.className='item';
+  if(item.isSpecial) div.classList.add('special');
+  div.innerHTML=`<span class='time'>${formatTime(start)} - ${formatTime(end)}</span>${title}`;
+  if(now>=start && now<=end) current=title;
+  scheduleDiv.appendChild(div);
+ });
+ nowPlaying.innerText=current?('Now Playing: '+current):'No program playing';
+}
+
+function formatTime(d){ return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+
+setInterval(loadSchedule,30000); loadSchedule();
 
 /* PWA */
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register('sw.js');
-}
-
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
 </script>
 
 </body>
