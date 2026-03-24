@@ -95,6 +95,10 @@ button:active { transform:translateY(0); }
 .title-nowplaying {
 	color: #8d8f8e;
 }
+.link {
+	color: inherit;
+	text-decoration: none;
+}
 </style>
 </head>
 <body>
@@ -156,7 +160,7 @@ async function loadSchedule(){
     renderSchedule(combined);
 
   } catch(e){
-    nowPlaying.innerHTML = "<div style='color:red;text-align:center;'>Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a></div>";
+    nowPlaying.innerHTML = "<div style='color:red;text-align:center;'>Failed to load schedule. <a href='#' class='link' onclick='loadSchedule()'>Retry..</a></div>";
     console.error(e);
   }
 }
