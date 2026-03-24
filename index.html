@@ -156,7 +156,7 @@ async function loadSchedule(){
     renderSchedule(combined);
 
   } catch(e){
-    nowPlaying.innerHTML = "<div style='color:red;text-align:center;'>Failed to load schedule</div>";
+    nowPlaying.innerHTML = "<div style='color:red;text-align:center;'>Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a></div>";
     console.error(e);
   }
 }
