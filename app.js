@@ -329,7 +329,7 @@ async function checkVersion() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    checkVersion();();
+    checkVersion();
 });
 setInterval(() => checkVersion(), 60000);
 
