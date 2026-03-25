@@ -98,8 +98,9 @@ function renderSchedule(items){
 		div.innerHTML = `
 			<div class="time">${displayTime}</div>
 			<div class="info">
-				<div class="title">${title}</div>${typeTag}
+				<div class="title">${title} </div>
 				${description ? `<div class="description">${description}</div>` : ""}
+				${typeTag}
 			</div>
 		`;
 
