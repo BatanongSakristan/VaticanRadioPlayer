@@ -36,7 +36,8 @@ async function loadSchedule(){
     renderSchedule(uniqueItems);
 
   } catch(e){
-    nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
+    //nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
+	loadSchedule();
   }
 }
 
