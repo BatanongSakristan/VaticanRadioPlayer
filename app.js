@@ -5,6 +5,42 @@ const wave = document.getElementById("wave");
 const channelBtn = document.getElementById("channelBtn");
 const channelPopup = document.querySelector(".channel-popup");
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch(err => console.error('Service Worker Registration Failed:', err));
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Show your custom install button
+    const installBtn = document.getElementById('installBtn');
+    installBtn.style.display = 'inline-block';
+
+    installBtn.addEventListener('click', async () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt(); // show browser prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('User choice:', outcome);
+        deferredPrompt = null;
+    });
+});
+
+// Set a cookie
+function setCookie(name, value, days=365) {
+    const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+// Get a cookie
+function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+}
+
 const channels = [
   { code: 'sq', name: 'Albanian' }, { code: 'am', name: 'Amharic' }, { code: 'ar', name: 'Arabic' },
   { code: 'hy', name: 'Armenian' }, { code: 'be', name: 'Belarusian' }, { code: 'bg', name: 'Bulgarian' },
@@ -73,6 +109,17 @@ function switchChannel(code){
     // Update active highlight
     setActiveChannel(code);
     updateChannelLabel(code);
+	
+	// Save selected channel to cookie
+    setCookie("vrp_channel", code);
+}
+
+const savedChannel = getCookie("vrp_channel");
+if(savedChannel && channels.find(c => c.code === savedChannel)){
+    currentChannel = savedChannel;
+    switchChannel(currentChannel);
+} else {
+    switchChannel(currentChannel); // default channel
 }
 
 const currentChannelName = document.getElementById("currentChannelName");
@@ -118,11 +165,11 @@ async function loadSchedule(code){
     renderSchedule(uniqueItems);
   } catch(e){
     //nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
-	setTimeout(loadSchedule, 5000);
+	setTimeout(loadSchedule(code), 5000);
   }
 }
 
-setInterval(loadSchedule(currentChannel), 30000);
+setInterval(switchChannel(currentChannel), 30000);
 
 function renderSchedule(items){
     scheduleDiv.innerHTML = "";
@@ -298,6 +345,15 @@ function updateVolume() {
     } else {
         volumeIcon.innerText = "volume_up";
     }
+	
+	setCookie("vrp_volume", audio.volume);
+}
+
+const savedVolume = getCookie("vrp_volume");
+if(savedVolume !== null){
+    audio.volume = parseFloat(savedVolume);
+    volumeSlider.value = savedVolume;
+    updateVolume();
 }
 
 // When slider moves
