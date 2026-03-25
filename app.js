@@ -85,6 +85,9 @@ function populateChannels() {
 
         channelPopup.appendChild(div);
     });
+	
+	// Apply ripple to each channel div
+    applyRipple(".channel-popup div");
 }
 
 populateChannels();
@@ -260,19 +263,7 @@ function renderSchedule(items){
 }
 
 // Delegated ripple for schedule items
-scheduleDiv.addEventListener("click", e => {
-    const item = e.target.closest(".item");
-    if(!item) return;
-    const ripple = document.createElement("span");
-    ripple.className = "ripple";
-    const rect = item.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = ripple.style.height = size + "px";
-    ripple.style.left = (e.clientX - rect.left - size/2) + "px";
-    ripple.style.top = (e.clientY - rect.top - size/2) + "px";
-    item.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 500);
-});
+applyRipple("schedule");
 
 // ---------------- TIME FORMATTING ----------------
 function formatTime(date){
@@ -335,16 +326,22 @@ setInterval(() => checkVersion(), 60000);
 
 // ---------------- RIPPLES ----------------
 // Buttons ripple
-document.querySelectorAll("button").forEach(btn => {
-    btn.addEventListener("click", e => {
-        const ripple = document.createElement("span");
-        ripple.className = "ripple";
-        const rect = btn.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        ripple.style.width = ripple.style.height = size + "px";
-        ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
-        ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
-        btn.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 500);
+applyRipple("button");
+function applyRipple(selector) {
+    document.querySelectorAll(selector).forEach(el => {
+        el.addEventListener("click", e => {
+            const ripple = document.createElement("span");
+            ripple.className = "ripple";
+
+            const rect = el.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+
+            ripple.style.width = ripple.style.height = size + "px";
+            ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+            ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+
+            el.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+        });
     });
-});
+}
