@@ -10,6 +10,7 @@ const volumeBtn = document.getElementById("volumeBtn");
 const volumePopup = document.querySelector(".volume-popup");
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeIcon = document.getElementById("volumeIcon");
+const loading = document.getElementById("loading");
 
 // ---------------- SERVICE WORKER ----------------
 if ('serviceWorker' in navigator) {
@@ -158,7 +159,7 @@ async function loadSchedule(code = currentChannel) {
         const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(baseUrl)}`);
         const data = await res.json();
 
-        const combined = [...data.episodes, ...data.special];
+        const combined = [...(data.episodes || []), ...(data.special || [])];
 
         // Remove duplicates
         const seen = new Set();
@@ -174,9 +175,7 @@ async function loadSchedule(code = currentChannel) {
 
         renderSchedule(uniqueItems);
     } catch (e) {
-        console.error("Failed to load schedule:", e);
-        loading.style.display = "none";
-        nowPlaying.innerHTML = "Failed to load schedule.";
+        setTimeout(() => loadSchedule(currentChannel), 10000);
     }
 }
 
