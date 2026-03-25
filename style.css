@@ -163,16 +163,6 @@ a {
     color: #333;
 }
 
-#volumeSlider {
-  -webkit-appearance: none;
-  width: 8px;        /* thickness of the slider */
-  height: 100px;     /* length of slider */
-  background: rgba(255,255,255,0.2);
-  border-radius: 5px;
-  cursor: pointer;
-  transform: rotate(-90deg); /* rotate horizontal to vertical */
-}
-
 .item.special span.time {
 	color:#000;
 }
@@ -328,8 +318,8 @@ html {
 }
 
 .tag.active-tag.special-tag {
-    background-color: #ffd700; /* solid gold */
-    color: #000;               /* black text */
+    background-color: #fff; /* solid gold */
+    color: #ffd700;               /* black text */
 }
 
 .tag-container {
@@ -351,13 +341,13 @@ html {
   transform-origin: bottom center;
   transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 0;
-
   background: rgba(30,31,38,0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 12px;
   padding: 8px;
+  transition:0.3s;
   z-index: 10;
 }
 
@@ -369,6 +359,7 @@ html {
 #volumeSlider {
   -webkit-appearance: none;
   width: 100px;
+  transition:0.3s;
   transform: rotate(0deg);
   display: block;
   margin: 0 auto;
