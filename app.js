@@ -290,48 +290,48 @@ setInterval(updateTabTitle, 2000);
 switchChannel(currentChannel); // Loads schedule and audio
 updateVolume();
 
-// ---------------- SERVICE VERSION CHECK ----------------
 let currentVersion = null;
 
 async function checkVersion() {
-	  try {
-		const res = await fetch("./manifest.json?cacheBust=" + Date.now());
-		const data = await res.json();
+    try {
+        const res = await fetch("./manifest.json?cacheBust=" + Date.now());
+        const data = await res.json();
 
-		if (!currentVersion) {
-			// First load
-			currentVersion = data.version;
-			console.log("[INFO] Current version: ", currentVersion);
-			return;
-		}
+        if (!currentVersion) {
+            // First load
+            currentVersion = data.version;
+            console.log("[INFO] Current version: ", currentVersion);
+            // Update the version display here
+            const versionElem = document.getElementById("version");
+            if (versionElem) versionElem.innerText = "v" + currentVersion;
+            return;
+        }
 
-		if (data.version !== currentVersion) {
-			console.log("[NOTICE] New version detected: ", data.version);
-
-			var userResponse = confirm("A new version was detected released: VRP v" + data.version + "\nDo you want to proceed to reload?");
-
-			if (userResponse == true) {
-				console.log("[NOTICE] Reloading to the new version: VRP v", data.version);
-				location.reload(true);
-			} else {
-				console.warn("[WARNING] The user does not update. It might cause issues, it is recommended to reload for the update for bugs and issues fixes.");
-			}
-		}
-
-	} catch (e) {
-		console.error("[ERROR] Version check failed: ", e);
-	}
+        if (data.version !== currentVersion) {
+            console.log("[NOTICE] New version detected: ", data.version);
+            const userResponse = confirm(
+                "A new version was detected released: VRP v" +
+                    data.version +
+                    "\nDo you want to proceed to reload?"
+            );
+            if (userResponse) {
+                console.log("[NOTICE] Reloading to the new version: VRP v", data.version);
+                location.reload();
+            } else {
+                console.warn(
+                    "[WARNING] The user does not update. It might cause issues, it is recommended to reload for the update for bugs and issues fixes."
+                );
+            }
+        }
+    } catch (e) {
+        console.error("[ERROR] Version check failed: ", e);
+    }
 }
 
-
-function checkForUpdates() {
-	checkVersion().then(version => {
-		document.getElementById("version").innerText = "v" + (currentVersion ?? "0.0.0");
-	})
-}
-
-checkForUpdates();
-setInterval(() => checkForUpdates(), 60000);
+document.addEventListener("DOMContentLoaded", () => {
+    checkVersion();();
+});
+setInterval(() => checkVersion(), 60000);
 
 // ---------------- RIPPLES ----------------
 // Buttons ripple
