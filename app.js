@@ -211,3 +211,27 @@ document.addEventListener("click", (e) => {
 });
 
 setInterval(updateVolume, 2000);
+
+function applyRipple(selector) {
+  document.querySelectorAll(selector).forEach(el => {
+    el.addEventListener("click", e => {
+      const ripple = document.createElement("span");
+      ripple.className = "ripple";
+
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+
+      ripple.style.width = ripple.style.height = size + "px";
+      ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+      ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+
+      el.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 500);
+    });
+  });
+}
+
+// Apply to buttons and schedule items
+applyRipple("button");
+applyRipple(".item");
