@@ -50,7 +50,7 @@ function getCookie(name) {
 const channels = [
   { code: 'sq', name: 'Albanian' }, { code: 'am', name: 'Amharic' }, { code: 'ar', name: 'Arabic' },
   { code: 'hy', name: 'Armenian' }, { code: 'be', name: 'Belarusian' }, { code: 'bg', name: 'Bulgarian' },
-  { code: 'zht', name: 'Chinese' }, { code: 'hr', name: 'Croatian' }, { code: 'cs', name: 'Czech' },
+  { code: 'zh', name: 'Chinese' }, { code: 'hr', name: 'Croatian' }, { code: 'cs', name: 'Czech' },
   { code: 'en', name: 'English' }, { code: 'fr', name: 'French' }, { code: 'de', name: 'German' },
   { code: 'hi', name: 'Hindi' }, { code: 'hu', name: 'Hungarian' }, { code: 'it', name: 'Italian' },
   { code: 'lv', name: 'Latvian' }, { code: 'lt', name: 'Lithuanian' }, { code: 'ml', name: 'Malayalam' },
@@ -181,6 +181,7 @@ async function loadSchedule(code = currentChannel) {
 
 function renderSchedule(items){
     scheduleDiv.innerHTML = "";
+	scheduleDiv.style.display = "none";
     const now = new Date();
     let currentItem = null;
     let scheduledDividerAdded = false;
