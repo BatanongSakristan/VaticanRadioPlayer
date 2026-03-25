@@ -146,9 +146,14 @@ a {
     gap:2px;
 }
 
-.item .description {
+.item .special .description {
     font-size:0.8em;
     color: #000;
+}
+
+.item .description {
+    font-size:0.8em;
+    color: #fff;
 }
 
 #volumeSlider {
