@@ -353,15 +353,15 @@ html {
 	text-shadow: 0 1px 1px rgba(255,255,255,0.5);    /* small text shadow */
 }
 
-/* Song / Special default */
-.song-tag { background-color: #1a73e8; color: #fff; }
+/* Normal and Special tag */
+.normal-tag { background-color: #1a73e8; color: #fff; }
 .special-tag {
 	background: #000; /* darker gold → brighter gold */
     color: rgba(255, 215, 0, 0.5);
 }
 
 /* Active tag styling */
-.tag.active-tag.song-tag {
+.tag.active-tag.normal-tag {
     background-color: #fff;   /* white */
     color: #1a73e8;           /* blue text */
 }
