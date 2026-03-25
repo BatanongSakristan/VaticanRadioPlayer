@@ -151,14 +151,14 @@ a {
     gap:2px;
 }
 
-.item .special .description {
+.item.normal .description {
     font-size:0.8em;
-    color: #000;
+    color: #ccc;
 }
 
-.item .normal .description {
+.item.special .description {
     font-size:0.8em;
-    color: #fff;
+    color: #333;
 }
 
 #volumeSlider {
@@ -190,13 +190,20 @@ a {
   left:100%;
 }
 
-.time {
+.item .time {
   min-width:90px;
   font-size:0.8em;
   color:#ccc;
 }
 
-.title { color:#fff; font-size:0.95em; }
+.item.special .time {
+  min-width:90px;
+  font-size:0.8em;
+  color:#000;
+}
+
+.item .title { color:#fff; font-size:0.95em; }
+
 .item.special .title { color:#000; }
 
 /* COPYRIGHT */
