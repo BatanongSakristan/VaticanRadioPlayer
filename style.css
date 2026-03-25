@@ -441,7 +441,7 @@ html {
     margin: 20px 0 10px 0;
     font-size: 0.85em;
     font-weight: bold;
-    color: #ffd700; /* gold text */
+    color: #ccc; /* gold text */
 }
 
 .schedule-divider::before,
