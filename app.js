@@ -323,9 +323,15 @@ async function checkVersion() {
 	}
 }
 
-setInterval(() => checkVersion().then(version => {
-	document.getElementById("version").innerText = "v" + (version ?? "0.0.0");
-}), 60000);
+
+function checkForUpdates() {
+	checkVersion().then(version => {
+		document.getElementById("version").innerText = "v" + (version ?? "0.0.0");
+	})
+}
+
+checkForUpdates();
+setInterval(() => checkForUpdates(), 60000);
 
 // ---------------- RIPPLES ----------------
 // Buttons ripple
