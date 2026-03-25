@@ -24,6 +24,14 @@
 <div class="button-group">
   <button onclick="playRadio()"><span class="material-icons">play_arrow</span></button>
   <button onclick="pauseRadio()"><span class="material-icons">pause</span></button>
+  
+  <!-- Volume button + slider -->
+  <div class="volume-container">
+    <button id="volumeBtn"><span class="material-icons" id="volumeIcon">volume_up</span></button>
+    <div class="volume-popup">
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+    </div>
+  </div>
 </div>
 
 <div id="nowPlaying"><div id="loading" class="loading">Loading schedule.</div></div>

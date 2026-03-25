@@ -37,7 +37,7 @@ async function loadSchedule(){
 
   } catch(e){
     //nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
-	setInterval(loadSchedule,1000);
+	setTimeout(loadSchedule, 5000);
   }
 }
 
@@ -176,3 +176,38 @@ function updateTabTitle() {
         document.title = "Vatican Radio Player - Batan-ong Sakristan";
     }
 }
+
+const volumeBtn = document.getElementById("volumeBtn");
+const volumePopup = document.querySelector(".volume-popup");
+const volumeSlider = document.getElementById("volumeSlider");
+const volumeIcon = document.getElementById("volumeIcon");
+
+// Toggle slider popup
+volumeBtn.addEventListener("click", () => {
+    volumePopup.classList.toggle("show");
+});
+
+// Update audio volume & icon
+function updateVolume() {
+    audio.volume = volumeSlider.value;
+
+    if(audio.volume === 0){
+        volumeIcon.innerText = "volume_off";
+    } else if(audio.volume <= 0.5){
+        volumeIcon.innerText = "volume_down";
+    } else {
+        volumeIcon.innerText = "volume_up";
+    }
+}
+
+// When slider moves
+volumeSlider.addEventListener("input", updateVolume);
+
+// Optional: click outside closes popup
+document.addEventListener("click", (e) => {
+    if(!volumeBtn.contains(e.target) && !volumePopup.contains(e.target)){
+        volumePopup.classList.remove("show");
+    }
+});
+
+setInterval(updateVolume, 2000);
