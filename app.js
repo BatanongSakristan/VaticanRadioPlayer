@@ -229,7 +229,7 @@ function renderSchedule(items){
         div.className = `item ${item.isSpecial ? "special" : "normal"}`;
 
         let displayTime = start.toDateString() !== now.toDateString()
-            ? `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  ${formatTime(start)} - ${formatTime(end)}`
+            ? `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  (${formatTime(start)} - ${formatTime(end)})`
             : `${formatTime(start)} - ${formatTime(end)}`;
 
         let typeTag = item.isSpecial ? '<span class="tag special-tag">Special</span>'
