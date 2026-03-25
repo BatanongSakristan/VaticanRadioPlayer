@@ -296,6 +296,7 @@ html {
 
 .tag {
     display: inline-block;
+	white-space: nowrap;
     font-size: 0.7em;
     font-weight: bold;
     padding: 2px 6px;
