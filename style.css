@@ -456,30 +456,33 @@ html {
     text-transform: uppercase;
 }
 
+/* CHANNEL CONTAINER */
 .channel-container {
   position: relative;
   display: inline-block;
   margin-left: 10px;
 }
 
+/* CHANNEL POPUP - FROSTED GLASS */
 .channel-popup {
   position: absolute;
-  bottom: 60px; /* adjust above button */
+  bottom: 60px; /* above button */
   left: 50%;
   transform: translateX(-50%) scaleY(0);
-  transform-origin: bottom center; /* expand from top */
+  transform-origin: bottom center; /* popup expands upward */
   transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 0;
-  background: rgba(30,31,38,0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(30,31,38,0.3); /* frosted glass */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 12px;
   padding: 6px 0;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
-  width: 180px; /* fixed width */
+  width: 180px;
   z-index: 20;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
 .channel-popup.show {
@@ -487,14 +490,81 @@ html {
   opacity: 1;
 }
 
+/* CHANNEL ITEM - FROSTED + RIPPLES */
 .channel-popup div {
+  position: relative;
   padding: 8px 12px;
   cursor: pointer;
   font-size: 0.85em;
   color: #fff;
-  transition: 0.2s;
+  border-radius: 8px;
+  margin: 3px 6px;
+  overflow: hidden;
+  transition: 0.3s;
 }
 
+/* Highlight selected channel */
+.channel-popup div.active-channel {
+    background: #1a73e8;   /* blue highlight */
+    color: #fff;           /* text white */
+}
+
+/* Hover effect */
 .channel-popup div:hover {
-  background: #1a73e8;
+  background: rgba(255,255,255,0.1);
+}
+
+/* RIPPLES */
+.channel-popup div.ripple::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  width: 100px;
+  height: 100px;
+  opacity: 0.4;
+  background: #fff;
+  pointer-events: none;
+  transition: transform 0.5s, opacity 1s;
+}
+
+.channel-popup div.ripple.animate::after {
+  transform: scale(3);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.8s;
+}
+
+/* CUSTOM SCROLLBAR */
+.channel-popup::-webkit-scrollbar {
+    width: 8px;
+}
+.channel-popup::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+.channel-popup::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+}
+.channel-popup::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.35);
+}
+
+/* For Firefox */
+.channel-popup {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.05);
+}
+
+#currentChannelLabel {
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+#currentChannelName {
+  color: #ccc;  /* make channel name gray */
 }

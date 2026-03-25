@@ -35,6 +35,7 @@ function populateChannels(){
         channelPopup.appendChild(div);
     });
 }
+
 populateChannels();
 
 // Toggle popup
@@ -50,12 +51,39 @@ document.addEventListener("click", e=>{
     }
 });
 
-// Switch channel
+function setActiveChannel(code) {
+    document.querySelectorAll(".channel-popup div").forEach(div => {
+        if(div.dataset.code === code){
+            div.classList.add("active-channel");
+        } else {
+            div.classList.remove("active-channel");
+        }
+    });
+}
+
+// Call this inside switchChannel()
 function switchChannel(code){
     audio.src = `https://radio.vaticannews.va/stream-${code}`;
     audio.play();
-    loadSchedule();
+    loadSchedule(code);
+
+    const channel = channels.find(c => c.code === code);
+    if(channel) currentChannelName.innerText = channel.name;
+
+    // Update active highlight
+    setActiveChannel(code);
+    updateChannelLabel(code);
 }
+
+const currentChannelName = document.getElementById("currentChannelName");
+
+function updateChannelLabel(code){
+    const channel = channels.find(c => c.code === code);
+    if(channel){
+        currentChannelName.innerText = channel.name;
+    }
+}
+
 
 function playRadio(){ 
 	audio.play(); 
@@ -65,10 +93,10 @@ function pauseRadio(){
 	audio.pause(); 
 }
 
-async function loadSchedule(){
+async function loadSchedule(code){
   try{
     loading.style.display = "block";
-    const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
+    const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/${code}.json");
     const res = await fetch(`https://corsproxy.io/?url=${url}`);
     const data = await res.json();
 
@@ -88,12 +116,13 @@ async function loadSchedule(){
     uniqueItems.sort((a,b)=> new Date(a.startDate) - new Date(b.startDate));
 
     renderSchedule(uniqueItems);
-
   } catch(e){
     //nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
 	setTimeout(loadSchedule, 5000);
   }
 }
+
+setInterval(loadSchedule(currentChannel), 30000);
 
 function renderSchedule(items){
     scheduleDiv.innerHTML = "";
@@ -236,9 +265,7 @@ checkVersion().then(version => {
 	document.getElementById("version").innerText = "v" + (currentVersion ?? "0.0.0");
 });
 
-setInterval(loadSchedule,30000);
 setInterval(updateTabTitle, 2000);
-loadSchedule();
 checkVersion();
 
 function updateTabTitle() {
@@ -307,4 +334,6 @@ function applyRipple(selector) {
 
 // Apply to buttons and schedule items
 applyRipple("button");
+// Apply ripple on channel popup items
+applyRipple(".channel-popup div");
 applyRipple(".item"); // re apply for new items.
