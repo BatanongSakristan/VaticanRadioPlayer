@@ -75,5 +75,40 @@ function formatTime(date){
   return date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 }
 
+let currentVersion = null;
+
+async function checkVersion() {
+	  try {
+		const res = await fetch("./manifest.json?cacheBust=" + Date.now());
+		const data = await res.json();
+
+		if (!currentVersion) {
+			// First load
+			currentVersion = data.version;
+			console.log("[INFO] Current version: ", currentVersion);
+			return;
+		}
+
+		if (data.version !== currentVersion) {
+			console.log("[NOTICE] New version detected: ", data.version);
+
+			// Optional: show message before reload
+			// alert("New version available. Reloading...");
+
+			location.reload(true); // force reload
+		}
+
+	} catch (e) {
+		console.error("[ERROR] Version check failed: ", e);
+	}
+}
+
+// Example usage
+checkVersion().then(version => {
+	document.getElementById("version").innerText = "v" + (version ?? "0.0.0");
+});
+
 setInterval(loadSchedule,30000);
 loadSchedule();
+checkVersion();
+
