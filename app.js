@@ -37,7 +37,6 @@ async function loadSchedule(){
 
   } catch(e){
     //nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
-	loadSchedule();
 	setInterval(loadSchedule,1000);
   }
 }
@@ -165,5 +164,15 @@ checkVersion().then(version => {
 });
 
 setInterval(loadSchedule,30000);
+setInterval(updateTabTitle, 2000);
 loadSchedule();
 checkVersion();
+
+function updateTabTitle() {
+    const nowPlayingTitle = nowPlaying.querySelector('.title')?.innerText;
+    if(nowPlayingTitle){
+        document.title = nowPlayingTitle + " (VRP)";
+    } else {
+        document.title = "Vatican Radio Player - Batan-ong Sakristan";
+    }
+}
