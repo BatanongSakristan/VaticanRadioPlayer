@@ -326,7 +326,7 @@ async function checkVersion() {
 
 function checkForUpdates() {
 	checkVersion().then(version => {
-		document.getElementById("version").innerText = "v" + (version ?? "0.0.0");
+		document.getElementById("version").innerText = "v" + (currentVersion ?? "0.0.0");
 	})
 }
 
