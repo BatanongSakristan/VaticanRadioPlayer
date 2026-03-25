@@ -1,4 +1,3 @@
-// Vatican Radio Player JS - Leak-free version
 const audio = document.getElementById("audio");
 const scheduleDiv = document.getElementById("schedule");
 const nowPlaying = document.getElementById("nowPlaying");
@@ -293,18 +292,40 @@ updateVolume();
 
 // ---------------- SERVICE VERSION CHECK ----------------
 let currentVersion = null;
-async function checkVersion(){
-    try{
-        const res = await fetch("./manifest.json?cacheBust=" + Date.now());
-        const data = await res.json();
-        if(!currentVersion) { currentVersion = data.version; return; }
-        if(data.version !== currentVersion) location.reload(true);
-    } catch(e){
-        console.error("[ERROR] Version check failed: ", e);
-    }
+
+async function checkVersion() {
+	  try {
+		const res = await fetch("./manifest.json?cacheBust=" + Date.now());
+		const data = await res.json();
+
+		if (!currentVersion) {
+			// First load
+			currentVersion = data.version;
+			console.log("[INFO] Current version: ", currentVersion);
+			return;
+		}
+
+		if (data.version !== currentVersion) {
+			console.log("[NOTICE] New version detected: ", data.version);
+
+			var userResponse = confirm("A new version was detected released: VRP v" + data.version + "\nDo you want to proceed to reload?");
+
+			if (userResponse == true) {
+				console.log("[NOTICE] Reloading to the new version: VRP v", data.version);
+				location.reload(true);
+			} else {
+				console.warn("[WARNING] The user does not update. It might cause issues, it is recommended to reload for the update for bugs and issues fixes.");
+			}
+		}
+
+	} catch (e) {
+		console.error("[ERROR] Version check failed: ", e);
+	}
 }
-checkVersion();
-setInterval(() => checkVersion(), 60000);
+
+setInterval(() => checkVersion().then(version => {
+	document.getElementById("version").innerText = "v" + (version ?? "0.0.0");
+}), 60000);
 
 // ---------------- RIPPLES ----------------
 // Buttons ripple
