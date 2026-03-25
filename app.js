@@ -2,6 +2,60 @@ const audio = document.getElementById("audio");
 const scheduleDiv = document.getElementById("schedule");
 const nowPlaying = document.getElementById("nowPlaying");
 const wave = document.getElementById("wave");
+const channelBtn = document.getElementById("channelBtn");
+const channelPopup = document.querySelector(".channel-popup");
+
+const channels = [
+  { code: 'sq', name: 'Albanian' }, { code: 'am', name: 'Amharic' }, { code: 'ar', name: 'Arabic' },
+  { code: 'hy', name: 'Armenian' }, { code: 'be', name: 'Belarusian' }, { code: 'bg', name: 'Bulgarian' },
+  { code: 'zht', name: 'Chinese' }, { code: 'hr', name: 'Croatian' }, { code: 'cs', name: 'Czech' },
+  { code: 'en', name: 'English' }, { code: 'fr', name: 'French' }, { code: 'de', name: 'German' },
+  { code: 'hi', name: 'Hindi' }, { code: 'hu', name: 'Hungarian' }, { code: 'it', name: 'Italian' },
+  { code: 'lv', name: 'Latvian' }, { code: 'lt', name: 'Lithuanian' }, { code: 'ml', name: 'Malayalam' },
+  { code: 'pl', name: 'Polish' }, { code: 'pt', name: 'Portuguese' }, { code: 'ro', name: 'Romanian' },
+  { code: 'ru', name: 'Russian' }, { code: 'sk', name: 'Slovak' }, { code: 'sl', name: 'Slovenian' },
+  { code: 'es', name: 'Spanish' }, { code: 'sw', name: 'Swahili' }, { code: 'ta', name: 'Tamil' },
+  { code: 'ti', name: 'Tigrinya' }, { code: 'uk', name: 'Ukrainian' }, { code: 'vi', name: 'Vietnamese' },
+];
+
+let currentChannel = 'en'; // default
+
+// Populate popup
+function populateChannels(){
+    channelPopup.innerHTML = "";
+    channels.forEach(ch => {
+        const div = document.createElement("div");
+        div.innerText = ch.name;
+        div.dataset.code = ch.code;
+        div.addEventListener("click", () => {
+            currentChannel = ch.code;
+            switchChannel(currentChannel);
+            channelPopup.classList.remove("show");
+        });
+        channelPopup.appendChild(div);
+    });
+}
+populateChannels();
+
+// Toggle popup
+channelBtn.addEventListener("click", e=>{
+    e.stopPropagation();
+    channelPopup.classList.toggle("show");
+});
+
+// Close popup when clicking outside
+document.addEventListener("click", e=>{
+    if(!channelBtn.contains(e.target) && !channelPopup.contains(e.target)){
+        channelPopup.classList.remove("show");
+    }
+});
+
+// Switch channel
+function switchChannel(code){
+    audio.src = `https://radio.vaticannews.va/stream-${code}`;
+    audio.play();
+    loadSchedule();
+}
 
 function playRadio(){ 
 	audio.play(); 

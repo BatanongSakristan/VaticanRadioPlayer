@@ -384,9 +384,9 @@ html {
 
 .volume-popup {
   position: absolute;
-  bottom: 60px;
-  left: 50%;
-  transform: translateY(-50%) scaleY(0);
+  bottom: 120px; /* adjust above button */
+  left: 75%;
+  transform: translateX(-50%) scaleY(0);
   transform-origin: bottom center;
   transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 0;
@@ -401,7 +401,7 @@ html {
 }
 
 .volume-popup.show {
-  transform: translateY(-250%) translateX(-40%) rotate(-90deg) scaleY(1);
+  transform: translateX(-50%) rotate(-90deg) scaleY(1);
   opacity: 1;
 }
 
@@ -454,4 +454,47 @@ html {
 
 .schedule-divider {
     text-transform: uppercase;
+}
+
+.channel-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.channel-popup {
+  position: absolute;
+  bottom: 60px; /* adjust above button */
+  left: 50%;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom center; /* expand from top */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  background: rgba(30,31,38,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 6px 0;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 180px; /* fixed width */
+  z-index: 20;
+}
+
+.channel-popup.show {
+  transform: translateX(-50%) scaleY(1);
+  opacity: 1;
+}
+
+.channel-popup div {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.85em;
+  color: #fff;
+  transition: 0.2s;
+}
+
+.channel-popup div:hover {
+  background: #1a73e8;
 }
