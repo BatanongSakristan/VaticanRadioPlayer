@@ -294,6 +294,7 @@ html {
   100% { background-position: -200% 0; }
 }
 
+/* Default tags */
 .tag {
     display: inline-block;
     white-space: nowrap;
@@ -306,25 +307,17 @@ html {
     line-height: 1.2;
 }
 
-/* Song tag */
-.song-tag {
-    background-color: #1a73e8; /* blue */
-    color: #fff;
+/* Song / Special default */
+.song-tag { background-color: #1a73e8; color: #fff; }
+.special-tag { background: linear-gradient(135deg,#d4af37,#ffd700); color: #000; }
+
+/* Active tag styling */
+.tag.active-tag.song-tag {
+    background-color: #fff;   /* white */
+    color: #1a73e8;           /* blue text */
 }
 
-/* Special tag */
-.special-tag {
-    background: linear-gradient(135deg, #d4af37, #ffd700); /* gold */
-    color: #000;
-}
-
-/* Tags contrast when parent item is active (Now Playing) */
-.item.active .song-tag {
-    background-color: #ffffff;  /* make readable on blue active bg */
-    color: #1a73e8;             /* text contrasts with white */
-}
-
-.item.active .special-tag {
-    background-color: #ffd700;  /* solid gold for contrast */
-    color: #000;                /* text remains readable */
+.tag.active-tag.special-tag {
+    background-color: #ffd700; /* solid gold */
+    color: #000;               /* black text */
 }
