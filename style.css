@@ -13,6 +13,7 @@ body {
 	background: rgba(30,31,38,0.2);
 	border-radius: 16px;
 	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
 	backdrop-filter: blur(5px);
 	-webkit-backdrop-filter: blur(5px);
 	border: 1px solid rgba(255, 255, 255, 0.3);
@@ -91,6 +92,7 @@ button:active { transform:scale(0.90); }
   text-align:center;
   color:#ccc;
   margin-bottom:20px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
 }
 
 a {
@@ -305,14 +307,18 @@ html {
     border-radius: 4px;
     margin-left: 4px;
     line-height: 1.2;
+	border-radius:50%;
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Song / Special default */
 .song-tag { background-color: #1a73e8; color: #fff; }
 .special-tag {
-	background: linear-gradient(135deg, #b8860b, #ffd700); /* darker gold → brighter gold */
-    color: #000;                                     /* black text for readability */
-    border: 1px solid #a67c00;                       /* subtle border for contrast */
+	background: rgba(255, 215, 0, 0.5); /* darker gold → brighter gold */
+    color: #000;
     text-shadow: 0 1px 1px rgba(255,255,255,0.5);    /* small text shadow */
 }
 
