@@ -28,48 +28,58 @@ async function loadSchedule(){
 }
 
 function renderSchedule(items){
-	  scheduleDiv.innerHTML = "";
-	  const now = new Date();
-	  let currentItem=null;
+    scheduleDiv.innerHTML = "";
+    const now = new Date();
+    let currentItem = null;
 
-	  items.forEach(item=>{
-		const start = new Date(item.startDate);
-		const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
+    items.forEach(item=>{
+        const start = new Date(item.startDate);
+        const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
 
-		let title = item.titleFromProgram || item.title || "No title";
+        let title = item.titleFromProgram || item.title || "No title";
 
-		// ADD ARTIST ONLY IF SONG
-		if(item.rcsType === "Song"){
-		  const artist = item.artist || "Unknown Artist";
-		  title += ` - ${artist}`;
+        // Add artist if it's a song
+        let artist = "";
+        if(item.rcsType === "Song") {
+            artist = item.artist || "Unknown Artist";
+            title += ` - ${artist}`;
+        }
+
+        // Add description
+        let description = item.descriptionFromProgram || "";
+        if(item.translate && item.translate.description){
+            description = item.translate.description;
+        }
+
+        const div = document.createElement("div");
+        div.className="item";
+        if(item.isSpecial) div.classList.add("special");
+		
+		if(item.translate && item.translate.title){
+			title = item.translate.title + (artist ? ` - ${artist}` : "");
 		}
 
-		// ADD DESCRIPTION
-		if(item.descriptionFromProgram){
-		  title += ` (${item.descriptionFromProgram})`;
-		}
+        // Multi-line layout
+        div.innerHTML = `
+            <div class="time">${formatTime(start)} - ${formatTime(end)}</div>
+            <div class="info">
+                <div class="title">${title}</div>
+                ${description ? `<div class="description">${description}</div>` : ""}
+            </div>
+        `;
 
-		const div = document.createElement("div");
-		div.className="item";
+        if(now >= start && now <= end){
+            div.classList.add("active");
+            currentItem = title;
+        }
 
-		// SPECIAL STYLE
-		if(item.isSpecial) div.classList.add("special");
+        scheduleDiv.appendChild(div);
+        scheduleDiv.style.display = "block";
+    });
 
-		div.innerHTML = `
-		  <span class="time">${formatTime(start)} - ${formatTime(end)}</span>
-		  <span class="title">${title}</span>
-		`;
-
-		if(now>=start && now<=end){
-		  div.classList.add("active");
-		  currentItem=title;
-		}
-
-		scheduleDiv.appendChild(div);
-		scheduleDiv.style.display = "block";
-	  });
-
-	  nowPlaying.innerHTML = currentItem ? "Now Playing: <span class='title'>" + currentItem + "</span>": "No program or song is currently playing.";
+    nowPlaying.innerHTML = currentItem 
+        ? "Now Playing: <span class='title'>" + currentItem + "</span>"
+        : "No program or song is currently playing.";
 }
 
 function formatTime(date){
@@ -112,4 +122,3 @@ checkVersion().then(version => {
 setInterval(loadSchedule,30000);
 loadSchedule();
 checkVersion();
-

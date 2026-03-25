@@ -140,8 +140,29 @@ a {
   overflow:hidden;
 }
 
+.item .info {
+    display:flex;
+    flex-direction: column;
+    gap:2px;
+}
+
+.item .description {
+    font-size:0.8em;
+    color: #000;
+}
+
+#volumeSlider {
+  -webkit-appearance: none;
+  width: 8px;        /* thickness of the slider */
+  height: 100px;     /* length of slider */
+  background: rgba(255,255,255,0.2);
+  border-radius: 5px;
+  cursor: pointer;
+  transform: rotate(-90deg); /* rotate horizontal to vertical */
+}
+
 .item.special span.time {
-	color:#fff;
+	color:#000;
 }
 
 /* SHINE EFFECT */
@@ -255,3 +276,4 @@ html {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
