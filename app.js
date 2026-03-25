@@ -77,14 +77,21 @@ function renderSchedule(items){
 			title = item.translate.title + (artist ? ` - ${artist}` : "");
 		}
 
-        // Multi-line layout
-        div.innerHTML = `
-            <div class="time">${formatTime(start)} - ${formatTime(end)}</div>
-            <div class="info">
-                <div class="title">${title}</div>
-                ${description ? `<div class="description">${description}</div>` : ""}
-            </div>
-        `;
+        // Determine type tag
+		let typeTag = '';
+		if(item.isSpecial) {
+			typeTag = '<span class="tag special-tag">Special</span>';
+		} else if(item.rcsType === "Song") {
+			typeTag = '<span class="tag song-tag">Song</span>';
+		}
+
+		div.innerHTML = `
+			<div class="time">${formatTime(start)} - ${formatTime(end)}</div>
+			<div class="info">
+				<div class="title">${title} ${typeTag}</div>
+				${description ? `<div class="description">${description}</div>` : ""}
+			</div>
+		`;
 
         if(now >= start && now <= end){
             div.classList.add("active");
