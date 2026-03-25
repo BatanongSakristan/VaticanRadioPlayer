@@ -87,6 +87,11 @@ button:active { transform:scale(0.90); }
   color:#fff;
   margin-bottom:20px;
 }
+#nowPlaying .title {
+  text-align:center;
+  color:#ccc;
+  margin-bottom:20px;
+}
 
 a {
 	text-decoration: none;
