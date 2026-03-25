@@ -214,7 +214,7 @@ function renderSchedule(items){
         if(item.isSpecial && !specialDividerAdded){
             const divider = document.createElement("div");
             divider.className = "schedule-divider";
-            divider.innerText = "Special Coverage Programs";
+            divider.innerText = "Special Programs";
             scheduleDiv.appendChild(divider);
             specialDividerAdded = true;
         } else if(!item.isSpecial && !scheduledDividerAdded){
