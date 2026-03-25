@@ -93,6 +93,8 @@ function renderSchedule(items){
 			typeTag = '<span class="tag special-tag">Special</span>';
 		} else if(item.rcsType === "Song") {
 			typeTag = '<span class="tag normal-tag">Song</span>';
+		}else if(item.rcsType === "Link") {
+			typeTag = '<span class="tag normal-tag">Program</span>';
 		}
 
 		div.innerHTML = `
