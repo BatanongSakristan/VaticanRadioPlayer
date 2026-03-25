@@ -321,3 +321,8 @@ html {
     background-color: #ffd700; /* solid gold */
     color: #000;               /* black text */
 }
+
+.tag-container {
+    display: inline-block;  /* shrink to fit content */
+    margin-bottom: 4px;     /* space between tag and title */
+}

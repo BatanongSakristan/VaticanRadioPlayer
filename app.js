@@ -100,7 +100,7 @@ function renderSchedule(items){
 			<div class="info">
 				<div class="title">${title} </div>
 				${description ? `<div class="description">${description}</div>` : ""}
-				${typeTag}
+				${typeTag ? `<div class="tag-container">${typeTag}</div>` : ""}
 			</div>
 		`;
 
