@@ -309,7 +309,12 @@ html {
 
 /* Song / Special default */
 .song-tag { background-color: #1a73e8; color: #fff; }
-.special-tag { background: linear-gradient(135deg,#d4af37,#ffd700); color: #000; }
+.special-tag {
+	background: linear-gradient(135deg, #b8860b, #ffd700); /* darker gold → brighter gold */
+    color: #000;                                     /* black text for readability */
+    border: 1px solid #a67c00;                       /* subtle border for contrast */
+    text-shadow: 0 1px 1px rgba(255,255,255,0.5);    /* small text shadow */
+}
 
 /* Active tag styling */
 .tag.active-tag.song-tag {
