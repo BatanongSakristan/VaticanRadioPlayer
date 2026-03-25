@@ -150,28 +150,33 @@ document.addEventListener("click", (e) => {
 });
 
 // ---------------- SCHEDULE ----------------
-async function loadSchedule(code = currentChannel){
-    try{
+async function loadSchedule(code = currentChannel) {
+    try {
         loading.style.display = "block";
-        const url = encodeURIComponent(`https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/${code}.json`);
-        const res = await fetch(`https://corsproxy.io/?url=${url}`);
+        // Use proper URL, encode only the dynamic code
+        const baseUrl = `https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/${code}.json`;
+        const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(baseUrl)}`);
         const data = await res.json();
 
         const combined = [...data.episodes, ...data.special];
 
+        // Remove duplicates
         const seen = new Set();
         const uniqueItems = combined.filter(item => {
             const key = item.startDate + (item.titleFromProgram || item.title || "");
-            if(seen.has(key)) return false;
+            if (seen.has(key)) return false;
             seen.add(key);
             return true;
         });
 
-        uniqueItems.sort((a,b) => new Date(a.startDate) - new Date(b.startDate));
+        // Sort by start time
+        uniqueItems.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
         renderSchedule(uniqueItems);
-    } catch(e){
-        setTimeout(() => loadSchedule(code), 5000);
+    } catch (e) {
+        console.error("Failed to load schedule:", e);
+        loading.style.display = "none";
+        nowPlaying.innerHTML = "Failed to load schedule.";
     }
 }
 
