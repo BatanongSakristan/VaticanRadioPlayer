@@ -15,7 +15,7 @@ async function loadSchedule(){
   try{
     loading.style.display = "block";
     const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
-    const res = await fetch(`https://api.allorigins.win/raw?url=${url}`);
+    const res = await fetch(`https://corsproxy.io/?url=${url}`);
     const data = await res.json();
 
     // Combine episodes and special
