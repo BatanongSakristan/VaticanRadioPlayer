@@ -29,25 +29,26 @@ body {
 .logo { display:block; margin:0 auto 15px; width:170px; }
 
 /* SOUND WAVE */
-.sound-wave-container { display:flex; justify-content:center; margin-bottom:15px; }
-.sound-wave { display:flex; gap:8px; }
-.sound-wave div {
+.soundwave-container { display:flex; justify-content:center; margin-bottom:15px; }
+.soundwave { display:flex; gap:8px; }
+.soundwave div {
   width:20px;
   height:40px;
+  animation-play-state: running;
   background:#1a73e8;
   animation:wave 1s infinite ease-in-out;
   transform-origin:bottom;
 }
-.sound-wave div:nth-child(2){ animation-delay:0.2s }
-.sound-wave div:nth-child(3){ animation-delay:0.1s }
-.sound-wave div:nth-child(4){ animation-delay:0.3s }
-.sound-wave div:nth-child(5){ animation-delay:0.4s }
-.sound-wave div:nth-child(6){ animation-delay:0.6s }
-.sound-wave div:nth-child(7){ animation-delay:0.5s }
-.sound-wave div:nth-child(8){ animation-delay:0.8s }
-.sound-wave div:nth-child(9){ animation-delay:0.7s }
-.sound-wave div:nth-child(10){ animation-delay:0.9s }
-.sound-wave div:nth-child(11){ animation-delay:1.1s }
+.soundwave div:nth-child(2){ animation-delay:0.2s }
+.soundwave div:nth-child(3){ animation-delay:0.1s }
+.soundwave div:nth-child(4){ animation-delay:0.3s }
+.soundwave div:nth-child(5){ animation-delay:0.4s }
+.soundwave div:nth-child(6){ animation-delay:0.6s }
+.soundwave div:nth-child(7){ animation-delay:0.5s }
+.soundwave div:nth-child(8){ animation-delay:0.8s }
+.soundwave div:nth-child(9){ animation-delay:0.7s }
+.soundwave div:nth-child(10){ animation-delay:0.9s }
+.soundwave div:nth-child(11){ animation-delay:1.1s }
 
 @keyframes wave {
   0%,100% { transform:scaleY(0.4);}
@@ -69,6 +70,7 @@ button {
 	-webkit-backdrop-filter: blur(5px);
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	width:55px;
+	transition:0.3s;
 	height:55px;
 	color:white;
 	cursor:pointer;
@@ -91,11 +93,11 @@ button:active { transform:scale(0.90); }
 	background: rgba(30,31,38,0.2);
 	border-radius:20px;
 	padding: 20px;
+	display: none;
 	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 	backdrop-filter: blur(5px);
 	-webkit-backdrop-filter: blur(5px);
 	border: 1px solid rgba(255, 255, 255, 0.3);
-	max-height:800px;
 }
 
 /* NORMAL ITEM */
@@ -114,11 +116,15 @@ button:active { transform:scale(0.90); }
 	align-items:center;
 	transition:0.3s;
 }
-.item:hover { transform:scale(1.03); }
+.item:hover { 
+	transform:scale(1.03); 
+	cursor: pointer;
+}
 
 /* ACTIVE */
 .item.active {
   background:#1a73e8;
+  cursor: pointer;
 }
 
 /* SPECIAL GOLD */
