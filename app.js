@@ -105,7 +105,7 @@ async function checkVersion() {
 
 // Example usage
 checkVersion().then(version => {
-	document.getElementById("version").innerText = "v" + (version ?? "0.0.0");
+	document.getElementById("version").innerText = "v" + (currentVersion ?? "0.0.0");
 });
 
 setInterval(loadSchedule,30000);
