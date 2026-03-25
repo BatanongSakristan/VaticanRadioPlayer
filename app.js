@@ -255,15 +255,15 @@ function renderSchedule(items){
 
         scheduleDiv.appendChild(div);
         scheduleDiv.style.display = "block";
+		
     });
+	
+	applyRipple(".item");
 
     nowPlaying.innerHTML = currentItem 
         ? "Now Playing: <span class='title'>" + currentItem + "</span>"
         : "No program or song is currently playing.";
 }
-
-// Delegated ripple for schedule items
-applyRipple(".schedule div");
 
 // ---------------- TIME FORMATTING ----------------
 function formatTime(date){
