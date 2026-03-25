@@ -13,14 +13,27 @@ function pauseRadio(){
 
 async function loadSchedule(){
   try{
-	loading.style.display = "block";
+    loading.style.display = "block";
     const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
     const res = await fetch(`https://api.allorigins.win/raw?url=${url}`);
     const data = await res.json();
 
+    // Combine episodes and special
     const combined = [...data.episodes, ...data.special];
-    combined.sort((a,b)=> new Date(a.startDate) - new Date(b.startDate));
-    renderSchedule(combined);
+
+    // Remove duplicates using startDate + title as key
+    const seen = new Set();
+    const uniqueItems = combined.filter(item => {
+        const key = item.startDate + (item.titleFromProgram || item.title || "");
+        if(seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+
+    // Sort by start time
+    uniqueItems.sort((a,b)=> new Date(a.startDate) - new Date(b.startDate));
+
+    renderSchedule(uniqueItems);
 
   } catch(e){
     nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
