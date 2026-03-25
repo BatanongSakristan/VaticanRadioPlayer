@@ -77,7 +77,17 @@ function renderSchedule(items){
 			title = item.translate.title + (artist ? ` - ${artist}` : "");
 		}
 
-        // Determine type tag
+        // Determine display date for the time
+		let displayTime = '';
+		if (start.toDateString() !== now.toDateString()) {
+			// Not today → show date + time
+			displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric'})} ${formatTime(start)} - ${formatTime(end)}`;
+		} else {
+			// Today → only show time
+			displayTime = `${formatTime(start)} - ${formatTime(end)}`;
+		}
+
+		// Determine type tag
 		let typeTag = '';
 		if(item.isSpecial) {
 			typeTag = '<span class="tag special-tag">Special</span>';
@@ -86,7 +96,7 @@ function renderSchedule(items){
 		}
 
 		div.innerHTML = `
-			<div class="time">${formatTime(start)} - ${formatTime(end)}</div>
+			<div class="time">${displayTime}</div>
 			<div class="info">
 				<div class="title">${title} ${typeTag}</div>
 				${description ? `<div class="description">${description}</div>` : ""}
