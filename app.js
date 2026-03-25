@@ -81,7 +81,7 @@ function renderSchedule(items){
 		let displayTime = '';
 		if (start.toDateString() !== now.toDateString()) {
 			// Not today → show date + time
-			displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric'})} ${formatTime(start)} - ${formatTime(end)}`;
+			displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})} ${formatTime(start)} - ${formatTime(end)}`;
 		} else {
 			// Today → only show time
 			displayTime = `${formatTime(start)} - ${formatTime(end)}`;
