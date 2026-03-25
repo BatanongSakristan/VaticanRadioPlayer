@@ -46,6 +46,9 @@ function renderSchedule(items){
     const now = new Date();
     let currentItem = null;
 
+    let scheduledDividerAdded = false;
+    let specialDividerAdded = false;
+
     items.forEach(item=>{
         const start = new Date(item.startDate);
         const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
@@ -67,57 +70,73 @@ function renderSchedule(items){
 
         const div = document.createElement("div");
         div.className="item";
+
         if(item.isSpecial) {
-			div.classList.add("special");
-		} else {
-			div.classList.add("normal");
-		}
-		
-		if(item.translate && item.translate.title){
-			title = item.translate.title + (artist ? ` - ${artist}` : "");
-		}
+            div.classList.add("special");
 
-        // Determine display date for the time
-		let displayTime = '';
-		if (start.toDateString() !== now.toDateString()) {
-			// Not today → show date + time
-			displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  ${formatTime(start)} - ${formatTime(end)}`;
-		} else {
-			// Today → only show time
-			displayTime = `${formatTime(start)} - ${formatTime(end)}`;
-		}
+            // Insert special coverage divider
+            if(!specialDividerAdded){
+                const divider = document.createElement("div");
+                divider.className = "schedule-divider";
+                divider.innerText = "Special Coverage Programs";
+                scheduleDiv.appendChild(divider);
+                specialDividerAdded = true;
+            }
 
-		// Determine type tag
-		let typeTag = '';
-		if(item.isSpecial) {
-			typeTag = '<span class="tag special-tag">Special</span>';
-		} else if(item.rcsType === "Song") {
-			typeTag = '<span class="tag normal-tag">Song</span>';
-		}else if(item.rcsType === "Link") {
-			typeTag = '<span class="tag normal-tag">Program</span>';
-		}
+        } else {
+            div.classList.add("normal");
 
-		div.innerHTML = `
-			<div class="time">${displayTime}</div>
-			<div class="info">
-				<div class="title">${title} </div>
-				${description ? `<div class="description">${description}</div>` : ""}
-				${typeTag ? `<div class="tag-container">${typeTag}</div>` : ""}
-			</div>
-		`;
+            // Insert scheduled programs divider
+            if(!scheduledDividerAdded){
+                const divider = document.createElement("div");
+                divider.className = "schedule-divider";
+                divider.innerText = "Scheduled Programs";
+                scheduleDiv.appendChild(divider);
+                scheduledDividerAdded = true;
+            }
+        }
 
-        // Check if currently playing
-		const isActive = now >= start && now <= end;
-		if(isActive){
-			div.classList.add("active");
-			currentItem = title;
+        if(item.translate && item.translate.title){
+            title = item.translate.title + (artist ? ` - ${artist}` : "");
+        }
 
-			// Add active class to tag
-			const tagEl = div.querySelector(".tag");
-			if(tagEl){
-				tagEl.classList.add("active-tag");
-			}
-		}
+        // Display time
+        let displayTime = '';
+        if (start.toDateString() !== now.toDateString()) {
+            displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  ${formatTime(start)} - ${formatTime(end)}`;
+        } else {
+            displayTime = `${formatTime(start)} - ${formatTime(end)}`;
+        }
+
+        // Type tag
+        let typeTag = '';
+        if(item.isSpecial) {
+            typeTag = '<span class="tag special-tag">Special</span>';
+        } else if(item.rcsType === "Song") {
+            typeTag = '<span class="tag normal-tag">Song</span>';
+        } else if(item.rcsType === "Link") {
+            typeTag = '<span class="tag normal-tag">Program</span>';
+        }
+
+        div.innerHTML = `
+            <div class="time">${displayTime}</div>
+            <div class="info">
+                <div class="title">${title}</div>
+                ${description ? `<div class="description">${description}</div>` : ""}
+                ${typeTag ? `<div class="tag-container">${typeTag}</div>` : ""}
+            </div>
+        `;
+
+        // Active check
+        const isActive = now >= start && now <= end;
+        if(isActive){
+            div.classList.add("active");
+            currentItem = title;
+            const tagEl = div.querySelector(".tag");
+            if(tagEl){
+                tagEl.classList.add("active-tag");
+            }
+        }
 
         scheduleDiv.appendChild(div);
         scheduleDiv.style.display = "block";
@@ -126,6 +145,7 @@ function renderSchedule(items){
     nowPlaying.innerHTML = currentItem 
         ? "Now Playing: <span class='title'>" + currentItem + "</span>"
         : "No program or song is currently playing.";
+	applyRipple(".item"); // re apply for new items.
 }
 
 function formatTime(date){
@@ -236,4 +256,3 @@ function applyRipple(selector) {
 
 // Apply to buttons and schedule items
 applyRipple("button");
-applyRipple(".item");

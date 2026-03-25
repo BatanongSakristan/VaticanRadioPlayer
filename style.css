@@ -433,3 +433,18 @@ html {
   background: #1a73e8;
   cursor: pointer;
 }
+
+.schedule-divider {
+    text-align: center;
+    margin: 15px 0;
+    padding: 6px 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #ffd700; /* gold text */
+    border-radius: 12px;
+    background: rgba(30,31,38,0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
