@@ -67,9 +67,23 @@ function populateChannels() {
     channelPopup.innerHTML = "";
     channels.forEach(ch => {
         const div = document.createElement("div");
-        div.innerText = ch.name;
         div.dataset.code = ch.code;
         div.classList.toggle("active-channel", ch.code === currentChannel);
+
+        // Channel name span
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "channel-name";  // styled in CSS
+        nameSpan.innerText = ch.name;
+        div.appendChild(nameSpan);
+
+        // Default tag for current channel
+        if (ch.code === currentChannel) {
+            const defaultTag = document.createElement("span");
+            defaultTag.className = "default-tag"; // styled in CSS
+            defaultTag.innerText = "Default";
+            div.appendChild(defaultTag);
+        }
+
         channelPopup.appendChild(div);
     });
 }

@@ -556,6 +556,20 @@ html {
     scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.05);
 }
 
+.channel-name {
+    color: #ccc;
+    margin-right: 8px;
+}
+
+.default-tag {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 8px;
+    float: right;
+}
+
 #currentChannelLabel {
   text-align: center;
   color: #fff;
