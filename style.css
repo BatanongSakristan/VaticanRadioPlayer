@@ -307,8 +307,8 @@ html {
 /* Song / Special default */
 .song-tag { background-color: #1a73e8; color: #fff; }
 .special-tag {
-	background: rgba(255, 215, 0, 0.5); /* darker gold → brighter gold */
-    color: #000;
+	background: #fff; /* darker gold → brighter gold */
+    color: rgba(255, 215, 0, 0.5);
 }
 
 /* Active tag styling */
@@ -318,8 +318,8 @@ html {
 }
 
 .tag.active-tag.special-tag {
-    background-color: #fff; /* solid gold */
-    color: #ffd700;               /* black text */
+    background-color: #fff; 
+    color: #ffd700;
 }
 
 .tag-container {
