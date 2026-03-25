@@ -218,3 +218,40 @@ body::-webkit-scrollbar-thumb:hover {
 html {
     scroll-behavior: smooth;
 }
+
+.loading {
+  display: none;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 1px;
+}
+
+/* Animated dots */
+.loading::after {
+  content: "";
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+  100% { content: ""; }
+}
+
+/* Optional shimmer effect */
+.loading.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.2) 25%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.2) 75%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

@@ -13,6 +13,7 @@ function pauseRadio(){
 
 async function loadSchedule(){
   try{
+	loading.style.display = "block";
     const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/en.json");
     const res = await fetch(`https://api.allorigins.win/raw?url=${url}`);
     const data = await res.json();
@@ -22,7 +23,7 @@ async function loadSchedule(){
     renderSchedule(combined);
 
   } catch(e){
-    nowPlaying.innerHTML = "Failed to load schedule.";
+    nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
   }
 }
 
