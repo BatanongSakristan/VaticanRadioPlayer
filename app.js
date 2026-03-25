@@ -46,46 +46,28 @@ function renderSchedule(items){
     const now = new Date();
     let currentItem = null;
 
-    items.forEach(item=>{
-        const start = new Date(item.startDate);
-        const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
+    items.forEach(item => {
+		const start = new Date(item.startDate);
+		const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
+		let title = item.titleFromProgram || item.title || "No title";
 
-        let title = item.titleFromProgram || item.title || "No title";
-
-        // Add artist if it's a song
-        let artist = "";
-        if(item.rcsType === "Song") {
-            artist = item.artist || "Unknown Artist";
-            title += ` - ${artist}`;
-        }
-
-        // Add description
-        let description = item.descriptionFromProgram || "";
-        if(item.translate && item.translate.description){
-            description = item.translate.description;
-        }
-
-        const div = document.createElement("div");
-        div.className="item";
-        if(item.isSpecial) {
-			div.classList.add("special");
-		} else {
-			div.classList.add("normal");
-		}
-		
-		if(item.translate && item.translate.title){
-			title = item.translate.title + (artist ? ` - ${artist}` : "");
+		// Add artist if it's a song
+		if(item.rcsType === "Song") {
+			const artist = item.artist || "Unknown Artist";
+			title += ` - ${artist}`;
 		}
 
-        // Determine display date for the time
-		let displayTime = '';
-		if (start.toDateString() !== now.toDateString()) {
-			// Not today → show date + time
-			displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})} ${formatTime(start)} - ${formatTime(end)}`;
-		} else {
-			// Today → only show time
-			displayTime = `${formatTime(start)} - ${formatTime(end)}`;
-		}
+		const description = item.translate?.description || item.descriptionFromProgram || "";
+
+		const div = document.createElement("div");
+		div.className = "item";
+		if(item.isSpecial) div.classList.add("special");
+		else div.classList.add("normal");
+
+		// Determine if this item is currently playing
+		const now = new Date();
+		const isActive = now >= start && now <= end;
+		if(isActive) div.classList.add("active");
 
 		// Determine type tag
 		let typeTag = '';
@@ -95,23 +77,31 @@ function renderSchedule(items){
 			typeTag = '<span class="tag song-tag">Song</span>';
 		}
 
+		// Insert HTML
 		div.innerHTML = `
-			<div class="time">${displayTime}</div>
+			<div class="time">${formatTime(start)} - ${formatTime(end)}</div>
 			<div class="info">
-				<div class="title">${title} </div>
+				<div class="title">${title}</div>
 				${description ? `<div class="description">${description}</div>` : ""}
 				${typeTag}
 			</div>
 		`;
 
-        if(now >= start && now <= end){
-            div.classList.add("active");
-            currentItem = title;
-        }
+		// **JS: Change tag color if active**
+		const tagEl = div.querySelector(".tag");
+		if(tagEl && isActive) {
+			if(tagEl.classList.contains("song-tag")) {
+				tagEl.style.backgroundColor = "#ffffff"; // white background
+				tagEl.style.color = "#1a73e8";          // text blue
+			}
+			if(tagEl.classList.contains("special-tag")) {
+				tagEl.style.backgroundColor = "#ffd700"; // solid gold
+				tagEl.style.color = "#000";              // black text
+			}
+		}
 
-        scheduleDiv.appendChild(div);
-        scheduleDiv.style.display = "block";
-    });
+		scheduleDiv.appendChild(div);
+	});
 
     nowPlaying.innerHTML = currentItem 
         ? "Now Playing: <span class='title'>" + currentItem + "</span>"
