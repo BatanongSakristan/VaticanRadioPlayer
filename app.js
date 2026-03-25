@@ -66,7 +66,11 @@ function renderSchedule(items){
 
         const div = document.createElement("div");
         div.className="item";
-        if(item.isSpecial) div.classList.add("special");
+        if(item.isSpecial) {
+			div.classList.add("special");
+		} else {
+			div.classList.add("normal");
+		}
 		
 		if(item.translate && item.translate.title){
 			title = item.translate.title + (artist ? ` - ${artist}` : "");

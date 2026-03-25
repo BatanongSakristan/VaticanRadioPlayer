@@ -151,7 +151,7 @@ a {
     color: #000;
 }
 
-.item .description {
+.item .normal .description {
     font-size:0.8em;
     color: #fff;
 }
