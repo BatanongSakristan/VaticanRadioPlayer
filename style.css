@@ -435,16 +435,23 @@ html {
 }
 
 .schedule-divider {
+    display: flex;
+    align-items: center;
     text-align: center;
-    margin: 15px 0;
-    padding: 6px 12px;
+    margin: 20px 0 10px 0;
     font-size: 0.85em;
     font-weight: bold;
     color: #ffd700; /* gold text */
-    border-radius: 12px;
-    background: rgba(30,31,38,0.3);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.schedule-divider::before,
+.schedule-divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    margin: 0 10px;
+}
+
+.schedule-divider {
+    text-transform: uppercase;
 }

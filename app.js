@@ -68,32 +68,28 @@ function renderSchedule(items){
             description = item.translate.description;
         }
 
+        // Insert dividers
+        if(item.isSpecial && !specialDividerAdded){
+            const divider = document.createElement("div");
+            divider.className = "schedule-divider";
+            divider.innerText = "Special Coverage Programs";
+            scheduleDiv.appendChild(divider);
+            specialDividerAdded = true;
+        } else if(!item.isSpecial && !scheduledDividerAdded){
+            const divider = document.createElement("div");
+            divider.className = "schedule-divider";
+            divider.innerText = "Scheduled Programs";
+            scheduleDiv.appendChild(divider);
+            scheduledDividerAdded = true;
+        }
+
         const div = document.createElement("div");
         div.className="item";
 
-        if(item.isSpecial) {
+        if(item.isSpecial){
             div.classList.add("special");
-
-            // Insert special coverage divider
-            if(!specialDividerAdded){
-                const divider = document.createElement("div");
-                divider.className = "schedule-divider";
-                divider.innerText = "Special Coverage Programs";
-                scheduleDiv.appendChild(divider);
-                specialDividerAdded = true;
-            }
-
         } else {
             div.classList.add("normal");
-
-            // Insert scheduled programs divider
-            if(!scheduledDividerAdded){
-                const divider = document.createElement("div");
-                divider.className = "schedule-divider";
-                divider.innerText = "Scheduled Programs";
-                scheduleDiv.appendChild(divider);
-                scheduledDividerAdded = true;
-            }
         }
 
         if(item.translate && item.translate.title){
@@ -145,7 +141,8 @@ function renderSchedule(items){
     nowPlaying.innerHTML = currentItem 
         ? "Now Playing: <span class='title'>" + currentItem + "</span>"
         : "No program or song is currently playing.";
-	applyRipple(".item"); // re apply for new items.
+    
+    applyRipple(".item"); // reapply ripple after render
 }
 
 function formatTime(date){
@@ -256,3 +253,4 @@ function applyRipple(selector) {
 
 // Apply to buttons and schedule items
 applyRipple("button");
+applyRipple(".item"); // re apply for new items.
