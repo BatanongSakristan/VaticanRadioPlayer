@@ -10,7 +10,6 @@ const volumePopup = document.querySelector(".volume-popup");
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeIcon = document.getElementById("volumeIcon");
 const loading = document.getElementById("loading");
-
 // ---------------- SERVICE WORKER ----------------
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
@@ -59,7 +58,8 @@ const channels = [
   { code: 'ti', name: 'Tigrinya' }, { code: 'uk', name: 'Ukrainian' }, { code: 'vi', name: 'Vietnamese' },
 ];
 
-let currentChannel = getCookie("vrp_channel") || 'en'; // default
+let defaultChannel = 'en';
+let currentChannel = getCookie("vrp_channel") || defaultChannel; // default
 
 // ---------------- CHANNEL POPUP ----------------
 function populateChannels() {
@@ -76,7 +76,7 @@ function populateChannels() {
         div.appendChild(nameSpan);
 
         // Default tag for current channel
-        if (ch.code === currentChannel) {
+        if (ch.code === defaultChannel) {
             const defaultTag = document.createElement("span");
             defaultTag.className = "default-tag"; // styled in CSS
             defaultTag.innerText = "Default";
