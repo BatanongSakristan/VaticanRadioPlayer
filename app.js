@@ -263,7 +263,7 @@ function renderSchedule(items){
 }
 
 // Delegated ripple for schedule items
-applyRipple("schedule");
+applyRipple(".schedule div");
 
 // ---------------- TIME FORMATTING ----------------
 function formatTime(date){
