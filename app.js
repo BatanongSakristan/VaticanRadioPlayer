@@ -1,46 +1,51 @@
+// Vatican Radio Player JS - Leak-free version
 const audio = document.getElementById("audio");
 const scheduleDiv = document.getElementById("schedule");
 const nowPlaying = document.getElementById("nowPlaying");
 const wave = document.getElementById("wave");
 const channelBtn = document.getElementById("channelBtn");
 const channelPopup = document.querySelector(".channel-popup");
+const currentChannelName = document.getElementById("currentChannelName");
+const volumeBtn = document.getElementById("volumeBtn");
+const volumePopup = document.querySelector(".volume-popup");
+const volumeSlider = document.getElementById("volumeSlider");
+const volumeIcon = document.getElementById("volumeIcon");
 
+// ---------------- SERVICE WORKER ----------------
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('Service Worker Registered'))
         .catch(err => console.error('Service Worker Registration Failed:', err));
 }
 
+// ---------------- INSTALL PROMPT ----------------
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-
-    // Show your custom install button
     const installBtn = document.getElementById('installBtn');
     installBtn.style.display = 'inline-block';
-
     installBtn.addEventListener('click', async () => {
         installBtn.style.display = 'none';
-        deferredPrompt.prompt(); // show browser prompt
+        deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         console.log('User choice:', outcome);
         deferredPrompt = null;
     });
 });
 
-// Set a cookie
+// ---------------- COOKIES ----------------
 function setCookie(name, value, days=365) {
     const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
     document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
 
-// Get a cookie
 function getCookie(name) {
     const match = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
     return match ? decodeURIComponent(match[2]) : null;
 }
 
+// ---------------- CHANNELS ----------------
 const channels = [
   { code: 'sq', name: 'Albanian' }, { code: 'am', name: 'Amharic' }, { code: 'ar', name: 'Arabic' },
   { code: 'hy', name: 'Armenian' }, { code: 'be', name: 'Belarusian' }, { code: 'bg', name: 'Bulgarian' },
@@ -54,151 +59,137 @@ const channels = [
   { code: 'ti', name: 'Tigrinya' }, { code: 'uk', name: 'Ukrainian' }, { code: 'vi', name: 'Vietnamese' },
 ];
 
-let currentChannel = 'en'; // default
+let currentChannel = getCookie("vrp_channel") || 'en'; // default
 
-// Populate popup
-function populateChannels(){
+// ---------------- CHANNEL POPUP ----------------
+function populateChannels() {
     channelPopup.innerHTML = "";
     channels.forEach(ch => {
         const div = document.createElement("div");
         div.innerText = ch.name;
         div.dataset.code = ch.code;
-        div.addEventListener("click", () => {
-            currentChannel = ch.code;
-            switchChannel(currentChannel);
-            channelPopup.classList.remove("show");
-        });
+        div.classList.toggle("active-channel", ch.code === currentChannel);
         channelPopup.appendChild(div);
     });
 }
 
 populateChannels();
 
+// Delegated click for channel popup
+channelPopup.addEventListener("click", e => {
+    const div = e.target.closest("div");
+    if(!div) return;
+    const code = div.dataset.code;
+    switchChannel(code);
+    channelPopup.classList.remove("show");
+});
+
 // Toggle popup
-channelBtn.addEventListener("click", e=>{
+channelBtn.addEventListener("click", e => {
     e.stopPropagation();
     channelPopup.classList.toggle("show");
 });
 
 // Close popup when clicking outside
-document.addEventListener("click", e=>{
+document.addEventListener("click", e => {
     if(!channelBtn.contains(e.target) && !channelPopup.contains(e.target)){
         channelPopup.classList.remove("show");
     }
 });
 
-function setActiveChannel(code) {
-    document.querySelectorAll(".channel-popup div").forEach(div => {
-        if(div.dataset.code === code){
-            div.classList.add("active-channel");
-        } else {
-            div.classList.remove("active-channel");
-        }
-    });
-}
-
-// Call this inside switchChannel()
+// Switch channel function
 function switchChannel(code){
+    currentChannel = code;
     audio.src = `https://radio.vaticannews.va/stream-${code}`;
     audio.play();
     loadSchedule(code);
-
-    const channel = channels.find(c => c.code === code);
-    if(channel) currentChannelName.innerText = channel.name;
-
-    // Update active highlight
-    setActiveChannel(code);
     updateChannelLabel(code);
-	
-	// Save selected channel to cookie
+    document.querySelectorAll(".channel-popup div").forEach(div => {
+        div.classList.toggle("active-channel", div.dataset.code === code);
+    });
     setCookie("vrp_channel", code);
 }
 
-const savedChannel = getCookie("vrp_channel");
-if(savedChannel && channels.find(c => c.code === savedChannel)){
-    currentChannel = savedChannel;
-    switchChannel(currentChannel);
-} else {
-    switchChannel(currentChannel); // default channel
-}
-
-const currentChannelName = document.getElementById("currentChannelName");
-
 function updateChannelLabel(code){
     const channel = channels.find(c => c.code === code);
-    if(channel){
-        currentChannelName.innerText = channel.name;
+    if(channel) currentChannelName.innerText = channel.name;
+}
+
+// ---------------- VOLUME ----------------
+function updateVolume(){
+    audio.volume = volumeSlider.value;
+    if(audio.volume === 0){
+        volumeIcon.innerText = "volume_off";
+    } else if(audio.volume <= 0.5){
+        volumeIcon.innerText = "volume_down";
+    } else {
+        volumeIcon.innerText = "volume_up";
+    }
+    setCookie("vrp_volume", audio.volume);
+}
+
+// Load saved volume
+const savedVolume = getCookie("vrp_volume");
+if(savedVolume !== null){
+    audio.volume = parseFloat(savedVolume);
+    volumeSlider.value = savedVolume;
+    updateVolume();
+}
+
+// Toggle volume popup
+volumeBtn.addEventListener("click", () => volumePopup.classList.toggle("show"));
+
+// Slider input
+volumeSlider.addEventListener("input", updateVolume);
+
+// Close volume popup when clicking outside
+document.addEventListener("click", (e) => {
+    if(!volumeBtn.contains(e.target) && !volumePopup.contains(e.target)){
+        volumePopup.classList.remove("show");
+    }
+});
+
+// ---------------- SCHEDULE ----------------
+async function loadSchedule(code = currentChannel){
+    try{
+        loading.style.display = "block";
+        const url = encodeURIComponent(`https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/${code}.json`);
+        const res = await fetch(`https://corsproxy.io/?url=${url}`);
+        const data = await res.json();
+
+        const combined = [...data.episodes, ...data.special];
+
+        const seen = new Set();
+        const uniqueItems = combined.filter(item => {
+            const key = item.startDate + (item.titleFromProgram || item.title || "");
+            if(seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+
+        uniqueItems.sort((a,b) => new Date(a.startDate) - new Date(b.startDate));
+
+        renderSchedule(uniqueItems);
+    } catch(e){
+        setTimeout(() => loadSchedule(code), 5000);
     }
 }
-
-
-function playRadio(){ 
-	audio.play(); 
-}
-
-function pauseRadio(){ 
-	audio.pause(); 
-}
-
-async function loadSchedule(code){
-  try{
-    loading.style.display = "block";
-    const url = encodeURIComponent("https://www.vaticannews.va/bin/rcs/getonairscheduling.dir/${code}.json");
-    const res = await fetch(`https://corsproxy.io/?url=${url}`);
-    const data = await res.json();
-
-    // Combine episodes and special
-    const combined = [...data.episodes, ...data.special];
-
-    // Remove duplicates using startDate + title as key
-    const seen = new Set();
-    const uniqueItems = combined.filter(item => {
-        const key = item.startDate + (item.titleFromProgram || item.title || "");
-        if(seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-
-    // Sort by start time
-    uniqueItems.sort((a,b)=> new Date(a.startDate) - new Date(b.startDate));
-
-    renderSchedule(uniqueItems);
-  } catch(e){
-    //nowPlaying.innerHTML = "Failed to load schedule. <a href='#' onclick='loadSchedule()'>Retry..</a>";
-	setTimeout(loadSchedule(code), 5000);
-  }
-}
-
-setInterval(switchChannel(currentChannel), 30000);
 
 function renderSchedule(items){
     scheduleDiv.innerHTML = "";
     const now = new Date();
     let currentItem = null;
-
     let scheduledDividerAdded = false;
     let specialDividerAdded = false;
 
-    items.forEach(item=>{
+    items.forEach(item => {
         const start = new Date(item.startDate);
         const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
+        let title = item.translate?.title || item.titleFromProgram || item.title || "No title";
+        let artist = item.rcsType === "Song" ? (item.artist || "Unknown Artist") : "";
+        if(artist) title += ` - ${artist}`;
 
-        let title = item.titleFromProgram || item.title || "No title";
-
-        // Add artist if it's a song
-        let artist = "";
-        if(item.rcsType === "Song") {
-            artist = item.artist || "Unknown Artist";
-            title += ` - ${artist}`;
-        }
-
-        // Add description
-        let description = item.descriptionFromProgram || "";
-        if(item.translate && item.translate.description){
-            description = item.translate.description;
-        }
-
-        // Insert dividers
+        // Add dividers
         if(item.isSpecial && !specialDividerAdded){
             const divider = document.createElement("div");
             divider.className = "schedule-divider";
@@ -214,54 +205,31 @@ function renderSchedule(items){
         }
 
         const div = document.createElement("div");
-        div.className="item";
+        div.className = `item ${item.isSpecial ? "special" : "normal"}`;
 
-        if(item.isSpecial){
-            div.classList.add("special");
-        } else {
-            div.classList.add("normal");
-        }
+        let displayTime = start.toDateString() !== now.toDateString()
+            ? `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  ${formatTime(start)} - ${formatTime(end)}`
+            : `${formatTime(start)} - ${formatTime(end)}`;
 
-        if(item.translate && item.translate.title){
-            title = item.translate.title + (artist ? ` - ${artist}` : "");
-        }
-
-        // Display time
-        let displayTime = '';
-        if (start.toDateString() !== now.toDateString()) {
-            displayTime = `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  ${formatTime(start)} - ${formatTime(end)}`;
-        } else {
-            displayTime = `${formatTime(start)} - ${formatTime(end)}`;
-        }
-
-        // Type tag
-        let typeTag = '';
-        if(item.isSpecial) {
-            typeTag = '<span class="tag special-tag">Special</span>';
-        } else if(item.rcsType === "Song") {
-            typeTag = '<span class="tag normal-tag">Song</span>';
-        } else if(item.rcsType === "Link") {
-            typeTag = '<span class="tag normal-tag">Program</span>';
-        }
+        let typeTag = item.isSpecial ? '<span class="tag special-tag">Special</span>'
+                        : item.rcsType === "Song" ? '<span class="tag normal-tag">Song</span>'
+                        : '<span class="tag normal-tag">Program</span>';
 
         div.innerHTML = `
             <div class="time">${displayTime}</div>
             <div class="info">
                 <div class="title">${title}</div>
-                ${description ? `<div class="description">${description}</div>` : ""}
-                ${typeTag ? `<div class="tag-container">${typeTag}</div>` : ""}
+                ${item.descriptionFromProgram || item.translate?.description ? `<div class="description">${item.descriptionFromProgram || item.translate.description}</div>` : ""}
+                <div class="tag-container">${typeTag}</div>
             </div>
         `;
 
         // Active check
-        const isActive = now >= start && now <= end;
-        if(isActive){
+        if(now >= start && now <= end){
             div.classList.add("active");
             currentItem = title;
             const tagEl = div.querySelector(".tag");
-            if(tagEl){
-                tagEl.classList.add("active-tag");
-            }
+            if(tagEl) tagEl.classList.add("active-tag");
         }
 
         scheduleDiv.appendChild(div);
@@ -271,125 +239,66 @@ function renderSchedule(items){
     nowPlaying.innerHTML = currentItem 
         ? "Now Playing: <span class='title'>" + currentItem + "</span>"
         : "No program or song is currently playing.";
-    
-    applyRipple(".item"); // reapply ripple after render
 }
 
+// Delegated ripple for schedule items
+scheduleDiv.addEventListener("click", e => {
+    const item = e.target.closest(".item");
+    if(!item) return;
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    const rect = item.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = (e.clientX - rect.left - size/2) + "px";
+    ripple.style.top = (e.clientY - rect.top - size/2) + "px";
+    item.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+});
+
+// ---------------- TIME FORMATTING ----------------
 function formatTime(date){
   return date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 }
 
-let currentVersion = null;
-
-async function checkVersion() {
-	  try {
-		const res = await fetch("./manifest.json?cacheBust=" + Date.now());
-		const data = await res.json();
-
-		if (!currentVersion) {
-			// First load
-			currentVersion = data.version;
-			console.log("[INFO] Current version: ", currentVersion);
-			return;
-		}
-
-		if (data.version !== currentVersion) {
-			console.log("[NOTICE] New version detected: ", data.version);
-
-			// Optional: show message before reload
-			// alert("New version available. Reloading...");
-
-			location.reload(true); // force reload
-		}
-
-	} catch (e) {
-		console.error("[ERROR] Version check failed: ", e);
-	}
-}
-
-// Example usage
-checkVersion().then(version => {
-	document.getElementById("version").innerText = "v" + (currentVersion ?? "0.0.0");
-});
-
-setInterval(updateTabTitle, 2000);
-checkVersion();
-
+// ---------------- TAB TITLE UPDATE ----------------
 function updateTabTitle() {
     const nowPlayingTitle = nowPlaying.querySelector('.title')?.innerText;
-    if(nowPlayingTitle){
-        document.title = nowPlayingTitle + " (VRP)";
-    } else {
-        document.title = "Vatican Radio Player - Batan-ong Sakristan";
+    document.title = nowPlayingTitle ? `${nowPlayingTitle} (VRP)` : "Vatican Radio Player - Batan-ong Sakristan";
+}
+setInterval(updateTabTitle, 2000);
+
+// ---------------- INITIALIZATION ----------------
+switchChannel(currentChannel); // Loads schedule and audio
+updateVolume();
+
+// ---------------- SERVICE VERSION CHECK ----------------
+let currentVersion = null;
+async function checkVersion(){
+    try{
+        const res = await fetch("./manifest.json?cacheBust=" + Date.now());
+        const data = await res.json();
+        if(!currentVersion) { currentVersion = data.version; return; }
+        if(data.version !== currentVersion) location.reload(true);
+    } catch(e){
+        console.error("[ERROR] Version check failed: ", e);
     }
 }
+checkVersion();
+setInterval(() => checkVersion(), 60000);
 
-const volumeBtn = document.getElementById("volumeBtn");
-const volumePopup = document.querySelector(".volume-popup");
-const volumeSlider = document.getElementById("volumeSlider");
-const volumeIcon = document.getElementById("volumeIcon");
-
-// Toggle slider popup
-volumeBtn.addEventListener("click", () => {
-    volumePopup.classList.toggle("show");
-});
-
-// Update audio volume & icon
-function updateVolume() {
-    audio.volume = volumeSlider.value;
-
-    if(audio.volume === 0){
-        volumeIcon.innerText = "volume_off";
-    } else if(audio.volume <= 0.5){
-        volumeIcon.innerText = "volume_down";
-    } else {
-        volumeIcon.innerText = "volume_up";
-    }
-	
-	setCookie("vrp_volume", audio.volume);
-}
-
-const savedVolume = getCookie("vrp_volume");
-if(savedVolume !== null){
-    audio.volume = parseFloat(savedVolume);
-    volumeSlider.value = savedVolume;
-    updateVolume();
-}
-
-// When slider moves
-volumeSlider.addEventListener("input", updateVolume);
-
-// Optional: click outside closes popup
-document.addEventListener("click", (e) => {
-    if(!volumeBtn.contains(e.target) && !volumePopup.contains(e.target)){
-        volumePopup.classList.remove("show");
-    }
-});
-
-setInterval(updateVolume, 2000);
-
-function applyRipple(selector) {
-  document.querySelectorAll(selector).forEach(el => {
-    el.addEventListener("click", e => {
-      const ripple = document.createElement("span");
-      ripple.className = "ripple";
-
-      const rect = el.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-
-      ripple.style.width = ripple.style.height = size + "px";
-      ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
-      ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
-
-      el.appendChild(ripple);
-
-      setTimeout(() => ripple.remove(), 500);
+// ---------------- RIPPLES ----------------
+// Buttons ripple
+document.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", e => {
+        const ripple = document.createElement("span");
+        ripple.className = "ripple";
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + "px";
+        ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+        ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 500);
     });
-  });
-}
-
-// Apply to buttons and schedule items
-applyRipple("button");
-// Apply ripple on channel popup items
-applyRipple(".channel-popup div");
-applyRipple(".item"); // re apply for new items.
+});
