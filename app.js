@@ -197,66 +197,67 @@ async function loadSchedule(code = currentChannel) {
 
 function renderSchedule(items){
     scheduleDiv.innerHTML = "";
-	scheduleDiv.style.display = "none";
+    scheduleDiv.style.display = "none";
     const now = new Date();
     let currentItem = null;
-    let scheduledDividerAdded = false;
-    let specialDividerAdded = false;
 
-    items.forEach(item => {
-        const start = new Date(item.startDate);
-        const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
-        let title = item.translate?.title || item.titleFromProgram || item.title || "No title";
-        let artist = item.rcsType === "Song" ? (item.artist || "Unknown Artist") : "";
-        if(artist) title += ` - ${artist}`;
+    // Separate special and normal programs
+    const specialItems = items.filter(i => i.isSpecial);
+    const normalItems = items.filter(i => !i.isSpecial);
 
-        // Add dividers
-        if(item.isSpecial && !specialDividerAdded){
-            const divider = document.createElement("div");
-            divider.className = "schedule-divider";
-            divider.innerText = "Special Programs";
-            scheduleDiv.appendChild(divider);
-            specialDividerAdded = true;
-        } else if(!item.isSpecial && !scheduledDividerAdded){
-            const divider = document.createElement("div");
-            divider.className = "schedule-divider";
-            divider.innerText = "Scheduled Programs";
-            scheduleDiv.appendChild(divider);
-            scheduledDividerAdded = true;
-        }
+    // Helper to render a group
+    function renderGroup(groupItems, dividerText) {
+        if(groupItems.length === 0) return;
 
-        const div = document.createElement("div");
-        div.className = `item ${item.isSpecial ? "special" : "normal"}`;
+        const divider = document.createElement("div");
+        divider.className = "schedule-divider";
+        divider.innerText = dividerText;
+        scheduleDiv.appendChild(divider);
 
-        let displayTime = start.toDateString() !== now.toDateString()
-            ? `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  (${formatTime(start)} - ${formatTime(end)})`
-            : `${formatTime(start)} - ${formatTime(end)}`;
+        groupItems.forEach(item => {
+            const start = new Date(item.startDate);
+            const end = item.endDate ? new Date(item.endDate) : new Date(start.getTime() + (item.duration*1000));
+            let title = item.translate?.title || item.titleFromProgram || item.title || "No title";
+            let artist = item.rcsType === "Song" ? (item.artist || "Unknown Artist") : "";
+            if(artist) title += ` - ${artist}`;
 
-        let typeTag = item.isSpecial ? '<span class="tag special-tag">Special</span>'
-                        : item.rcsType === "Song" ? '<span class="tag normal-tag">Song</span>'
-                        : '<span class="tag normal-tag">Program</span>';
+            const div = document.createElement("div");
+            div.className = `item ${item.isSpecial ? "special" : "normal"}`;
 
-        div.innerHTML = `
-            <div class="time">${displayTime}</div>
-            <div class="info">
-                <div class="title">${title}</div>
-                ${item.descriptionFromProgram || item.translate?.description ? `<div class="description">${item.descriptionFromProgram || item.translate.description}</div>` : ""}
-                <div class="tag-container">${typeTag}</div>
-            </div>
-        `;
+            let displayTime = start.toDateString() !== now.toDateString()
+                ? `${start.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'})}  (${formatTime(start)} - ${formatTime(end)})`
+                : `${formatTime(start)} - ${formatTime(end)}`;
 
-        // Active check
-        if(now >= start && now <= end){
-            div.classList.add("active");
-            currentItem = title;
-            const tagEl = div.querySelector(".tag");
-            if(tagEl) tagEl.classList.add("active-tag");
-        }
+            let typeTag = item.isSpecial ? '<span class="tag special-tag">Special</span>'
+                            : item.rcsType === "Song" ? '<span class="tag normal-tag">Song</span>'
+                            : '<span class="tag normal-tag">Program</span>';
 
-        scheduleDiv.appendChild(div);
-        scheduleDiv.style.display = "block";
-		
-    });
+            div.innerHTML = `
+                <div class="time">${displayTime}</div>
+                <div class="info">
+                    <div class="title">${title}</div>
+                    ${item.descriptionFromProgram || item.translate?.description ? `<div class="description">${item.descriptionFromProgram || item.translate.description}</div>` : ""}
+                    <div class="tag-container">${typeTag}</div>
+                </div>
+            `;
+
+            // Active check
+            if(now >= start && now <= end){
+                div.classList.add("active");
+                currentItem = title;
+                const tagEl = div.querySelector(".tag");
+                if(tagEl) tagEl.classList.add("active-tag");
+            }
+
+            scheduleDiv.appendChild(div);
+        });
+    }
+
+    // Render normal and special groups separately
+    renderGroup(normalItems, "Scheduled Programs");
+    renderGroup(specialItems, "Special Programs");
+
+    scheduleDiv.style.display = "block";
 
     nowPlaying.innerHTML = currentItem 
         ? "Now Playing: <span class='title'>" + currentItem + "</span>"
