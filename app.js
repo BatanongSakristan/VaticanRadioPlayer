@@ -443,23 +443,47 @@ function pauseRadio() {
 	audio.pause();
 }
 
+// ----------- Info panel ------------
 const logo = document.getElementById("logo"); // your logo element
 const infoPanel = document.getElementById("infoPanel");
 const closeInfo = document.getElementById("closeInfo");
+const closeBtn = document.querySelector(".close-btn");
+
+// Close with fade-out
+closeBtn.addEventListener("click", () => {
+    // Apply fadeOut animation
+    infoPanel.querySelector(".info-content").style.animation = "fadeOut 0.3s ease forwards";
+    infoPanel.style.opacity = 0;
+
+    // Wait for animation to finish before hiding
+    setTimeout(() => {
+        infoPanel.classList.remove("show");
+        infoPanel.querySelector(".info-content").style.animation = "fadeIn 0.3s ease forwards"; // reset for next open
+        infoPanel.style.opacity = 1; // reset opacity for next open
+    }, 300);
+});
+
+infoPanel.addEventListener("click", () => {
+    // Apply fadeOut animation
+    infoPanel.querySelector(".info-content").style.animation = "fadeOut 0.3s ease forwards";
+    infoPanel.style.opacity = 0;
+
+    // Wait for animation to finish before hiding
+    setTimeout(() => {
+        infoPanel.classList.remove("show");
+        infoPanel.querySelector(".info-content").style.animation = "fadeIn 0.3s ease forwards"; // reset for next open
+        infoPanel.style.opacity = 1; // reset opacity for next open
+    }, 300);
+});
+
+// Example: open panel
+document.querySelector(".logo").addEventListener("click", () => {
+    infoPanel.classList.add("show");
+});
 
 // Open panel
 logo.addEventListener("click", () => {
     infoPanel.classList.add("show");
 });
 
-// Close panel (X button)
-closeInfo.addEventListener("click", () => {
-    infoPanel.classList.remove("show");
-});
-
-// Close when clicking outside
-infoPanel.addEventListener("click", (e) => {
-    if(e.target === infoPanel){
-        infoPanel.classList.remove("show");
-    }
-});
+applyRipple(".close-btn");
