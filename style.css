@@ -608,7 +608,6 @@ html {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     will-change: backdrop-filter, -webkit-backdrop-filter;
-    border: 1px solid rgba(255,255,255,0.2);
     display: none;
     align-items: center;
     justify-content: center;
@@ -628,6 +627,7 @@ html {
     border-radius: 16px;
     border: 1px solid rgba(255,255,255,0.2);
     padding: 30px;
+	will-change: backdrop-filter, background;
     width: 500px;
     max-width: 90%;
     color: #fff;
@@ -675,6 +675,7 @@ html {
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(20px);
     border-radius: 50%;
+	will-change: backdrop-filter, background;
     border: 1px solid rgba(255,255,255,0.2);
 }
 
