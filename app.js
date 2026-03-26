@@ -297,6 +297,11 @@ setInterval(updateTabTitle, 2000);
 switchChannel(currentChannel); // Loads schedule and audio
 updateVolume();
 
+const owner = 'xRodzXD';
+const repo = 'VaticanRadioPlayer';
+const branch = 'main'; // Or the branch you want to check
+const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits?per_page=1&sha=${branch}`;
+
 let currentVersion = null;
 
 async function checkVersion() {
@@ -313,6 +318,26 @@ async function checkVersion() {
             if (versionElem) versionElem.innerText = "v" + currentVersion;
             return;
         }
+		
+		fetch(apiUrl, {
+			headers: {
+				'User-Agent': 'VaticanRadioPlayer', 
+			}
+		})
+		.then(response => response.json())
+		.then(commits => {
+			// The response is an array, the first element is the latest commit
+			const latestCommit = commits[0];
+			console.log('[INFO] Latest Commit SHA:', latestCommit.sha);
+			console.log('[INFO] Date:', latestCommit.commit.author.date);
+			console.log('[INFO] Commit URL:', latestCommit.html_url);
+			
+			const commitShaElem = document.getElementById("commit-sha");
+            if (commitShaElem) commitShaElem.innerText = "(<a href='" + latestCommit.html_url + "'>" + latestCommit.trim().substring(0, 7) + "</a>)";
+		})
+		.catch(error => {
+			console.error('Error fetching commit data:', error);
+		});
 
         if (data.version !== currentVersion) {
             console.log("[NOTICE] New version detected: ", data.version);
@@ -339,6 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
     checkVersion();
 });
 setInterval(() => checkVersion(), 60000);
+
 
 // ---------------- RIPPLES ----------------
 // Buttons ripple
@@ -370,3 +396,4 @@ function playRadio() {
 function pauseRadio() {
 	audio.pause();
 }
+
