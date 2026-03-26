@@ -326,6 +326,12 @@ async function checkVersion() {
 			const shortSha = latestCommit.sha?.toString().trim().substring(0, 7) || "unknown";
 			const url = latestCommit.html_url || "#";
 			commitShaElem.innerHTML = `(<a href="${url}">${shortSha}</a>)`;
+			
+			const commitShaElem = document.getElementById("last-update");
+			lastUpdateElem.innerText = formatRelativeTime(latestCommit.commit.author.date);
+			
+			const commitShaLongElem = document.getElementById("commit-sha-long");
+			lastUpdateElem.innerText = latestCommit.sha;
 		})
 		.catch(error => {
 			console.error('Error fetching commit data:', error);
@@ -360,6 +366,44 @@ async function checkVersion() {
     } catch (e) {
         console.error("[ERROR] Version check failed: ", e);
     }
+}
+
+function formatRelativeTime(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diff = Math.floor((now - past) / 1000); // seconds
+
+    if (diff < 10) return "just now";
+
+    if (diff < 60) return `${diff} seconds ago`;
+
+    const minutes = Math.floor(diff / 60);
+    if (minutes < 60) {
+        return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+        return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    }
+
+    const days = Math.floor(hours / 24);
+    if (days < 7) {
+        return `${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+
+    const weeks = Math.floor(days / 7);
+    if (weeks < 4) {
+        return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
+    }
+
+    const months = Math.floor(days / 30);
+    if (months < 12) {
+        return `${months} month${months !== 1 ? 's' : ''} ago`;
+    }
+
+    // 🔹 1 year or more → full date & time
+    return past.toLocaleString();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -399,3 +443,23 @@ function pauseRadio() {
 	audio.pause();
 }
 
+const logo = document.getElementById("logo"); // your logo element
+const infoPanel = document.getElementById("infoPanel");
+const closeInfo = document.getElementById("closeInfo");
+
+// Open panel
+logo.addEventListener("click", () => {
+    infoPanel.classList.add("show");
+});
+
+// Close panel (X button)
+closeInfo.addEventListener("click", () => {
+    infoPanel.classList.remove("show");
+});
+
+// Close when clicking outside
+infoPanel.addEventListener("click", (e) => {
+    if(e.target === infoPanel){
+        infoPanel.classList.remove("show");
+    }
+});
