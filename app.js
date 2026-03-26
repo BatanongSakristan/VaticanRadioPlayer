@@ -367,6 +367,6 @@ function playRadio() {
 	audio.play();
 }
 
-function playRadio() {
+function pauseRadio() {
 	audio.pause();
 }
