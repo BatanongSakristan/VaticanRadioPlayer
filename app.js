@@ -330,8 +330,8 @@ async function checkVersion() {
 			const lastUpdateElem = document.getElementById("last-update");
 			lastUpdateElem.innerText = formatRelativeTime(latestCommit.commit.author.date);
 			
-			const commitShaLongElem = document.getElementById("commit-sha-long");
-			commitShaLongElem.innerText = latestCommit.sha;
+			const commitShaInfoElem = document.getElementById("commit-sha-info");
+			commitShaInfoElem.innerText = latestCommit.sha?.toString().trim().substring(0, 7) || "unknown";
 		})
 		.catch(error => {
 			console.error('Error fetching commit data:', error);
