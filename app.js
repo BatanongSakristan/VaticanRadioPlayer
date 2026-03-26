@@ -323,7 +323,7 @@ async function checkVersion() {
 			console.log('[INFO] Commit URL:', latestCommit.html_url);
 			
 			const commitShaElem = document.getElementById("commit-sha");
-            if (commitShaElem) commitShaElem.innerText = "(<a href='" + latestCommit.html_url + "'>" + latestCommit.trim().substring(0, 7) + "</a>)";
+            if (commitShaElem) commitShaElem.innerText = "(<a href='" + String(latestCommit.html_url) + "'>" + String(latestCommit.sha).trim().substring(0, 7) + "</a>)";
 		})
 		.catch(error => {
 			console.error('Error fetching commit data:', error);
