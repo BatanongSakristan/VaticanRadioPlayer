@@ -321,7 +321,7 @@ async function checkVersion() {
 			console.log('[INFO] Latest Commit SHA:', latestCommit.sha);
 			console.log('[INFO] Date:', latestCommit.commit.author.date);
 			console.log('[INFO] Commit URL:', latestCommit.html_url);
-			
+			const commitShaElem = document.getElementById("commit-sha");
 			// Optional chaining (?.) prevents the "not a function" error if sha is missing
 			const shortSha = latestCommit.sha?.toString().trim().substring(0, 7) || "unknown";
 			const url = latestCommit.html_url || "#";
