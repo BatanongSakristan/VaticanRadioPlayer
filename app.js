@@ -361,3 +361,12 @@ function applyRipple(selector) {
         });
     });
 }
+
+// ------- Controls -------------
+function playRadio() {
+	audio.play();
+}
+
+function playRadio() {
+	audio.pause();
+}
