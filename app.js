@@ -327,11 +327,11 @@ async function checkVersion() {
 			const url = latestCommit.html_url || "#";
 			commitShaElem.innerHTML = `(<a href="${url}">${shortSha}</a>)`;
 			
-			const commitShaElem = document.getElementById("last-update");
+			const lastUpdateElem = document.getElementById("last-update");
 			lastUpdateElem.innerText = formatRelativeTime(latestCommit.commit.author.date);
 			
 			const commitShaLongElem = document.getElementById("commit-sha-long");
-			lastUpdateElem.innerText = latestCommit.sha;
+			commitShaLongElem.innerText = latestCommit.sha;
 		})
 		.catch(error => {
 			console.error('Error fetching commit data:', error);
