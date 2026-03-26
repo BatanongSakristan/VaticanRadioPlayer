@@ -344,6 +344,8 @@ async function checkVersion() {
             // Update the version display here
             const versionElem = document.getElementById("version");
             if (versionElem) versionElem.innerText = "v" + currentVersion;
+			const versionInfoPanelElem = document.getElementById("version-info");
+            if (versionInfoPanelElem) versionInfoPanelElem.innerText = "v" + currentVersion;
             return;
         }
 
