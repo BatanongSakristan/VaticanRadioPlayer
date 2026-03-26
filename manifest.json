@@ -1,7 +1,7 @@
 {
   "name": "VaticanRadioPlayer",
   "short_name": "VRP",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#000000",

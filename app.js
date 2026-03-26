@@ -308,16 +308,6 @@ async function checkVersion() {
     try {
         const res = await fetch("./manifest.json?cacheBust=" + Date.now());
         const data = await res.json();
-
-        if (!currentVersion) {
-            // First load
-            currentVersion = data.version;
-            console.log("[INFO] Current version: ", currentVersion);
-            // Update the version display here
-            const versionElem = document.getElementById("version");
-            if (versionElem) versionElem.innerText = "v" + currentVersion;
-            return;
-        }
 		
 		fetch(apiUrl, {
 			headers: {
@@ -338,6 +328,16 @@ async function checkVersion() {
 		.catch(error => {
 			console.error('Error fetching commit data:', error);
 		});
+		
+		if (!currentVersion) {
+            // First load
+            currentVersion = data.version;
+            console.log("[INFO] Current version: ", currentVersion);
+            // Update the version display here
+            const versionElem = document.getElementById("version");
+            if (versionElem) versionElem.innerText = "v" + currentVersion;
+            return;
+        }
 
         if (data.version !== currentVersion) {
             console.log("[NOTICE] New version detected: ", data.version);
