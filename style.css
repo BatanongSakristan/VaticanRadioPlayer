@@ -153,7 +153,6 @@ a {
 .item {
   position: relative;
   overflow: hidden;
-
   background: rgba(30,31,38,0.2);
   border-radius:50%;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -195,8 +194,18 @@ a {
 
 /* SPECIAL GOLD */
 .item.special {
+  background: rgba(30,31,38,0.2);
+  color: #d4af37;
+  backdrop-filter: blur(20px);
+  will-change: backdrop-filter, -webkit-backdrop-filter;
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  position:relative;
+  overflow:hidden;
+}
+
+.item.special.active {
   background: linear-gradient(135deg, #d4af37, #ffd700);
-  color:#000;
   position:relative;
   overflow:hidden;
 }
@@ -213,6 +222,11 @@ a {
 }
 
 .item.special .description {
+    font-size:0.8em;
+    color: #ccc;
+}
+
+.item.special.active .description {
     font-size:0.8em;
     color: #333;
 }
@@ -246,12 +260,17 @@ a {
 .item.special .time {
   min-width:90px;
   font-size:0.8em;
-  color:#000;
+  color: #ccc;
 }
 
-.item .title { color:#fff; font-size:0.95em; }
+.item .title { 
+	color: #fff;
+	font-size:0.95em; 
+ }
 
-.item.special .title { color:#000; }
+.item.special .title { 
+	color: #fff;
+}
 
 /* COPYRIGHT */
 .footer {
@@ -365,8 +384,8 @@ html {
 /* Normal and Special tag */
 .normal-tag { background-color: #1a73e8; color: #fff; }
 .special-tag {
-	background: #000; /* darker gold → brighter gold */
-    color: rgba(255, 215, 0, 0.5);
+	background: linear-gradient(135deg, #d4af37, #ffd700);
+    color: #000;
 }
 
 /* Active tag styling */
@@ -376,8 +395,8 @@ html {
 }
 
 .tag.active-tag.special-tag {
-    background-color: #fff; 
-    color: #ffd700;
+    background-color: #000; 
+    color: #d4af37;
 }
 
 .tag-container {
