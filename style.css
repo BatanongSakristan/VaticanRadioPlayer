@@ -266,7 +266,7 @@ a {
 .item .title { 
 	color: #fff;
 	font-size:0.95em; 
- }
+}
 
 .item.special .title { 
 	color: #fff;
@@ -388,6 +388,14 @@ html {
     color: #000;
 }
 
+.item.special.active .time {
+	color: #111;
+}
+
+.item.special.active .title {
+	color: #000;
+}
+
 /* Active tag styling */
 .tag.active-tag.normal-tag {
     background-color: #fff;   /* white */
@@ -395,7 +403,7 @@ html {
 }
 
 .tag.active-tag.special-tag {
-    background-color: #000; 
+    background: #000; 
     color: #d4af37;
 }
 
