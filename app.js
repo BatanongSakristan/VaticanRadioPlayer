@@ -298,7 +298,7 @@ setInterval(updateTabTitle, 2000);
 switchChannel(currentChannel); // Loads schedule and audio
 updateVolume();
 
-const owner = 'xRodzXD';
+const owner = 'BatanongSakristan';
 const repo = 'VaticanRadioPlayer';
 const branch = 'main'; // Or the branch you want to check
 const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits?per_page=1&sha=${branch}`;
