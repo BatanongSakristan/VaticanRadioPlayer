@@ -466,7 +466,7 @@ closeBtn.addEventListener("click", () => {
     }, 300);
 });
 
-infoPanel.addEventListener("click", () => {
+/*infoPanel.addEventListener("click", () => {
     // Apply fadeOut animation
     infoPanel.querySelector(".info-content").style.animation = "fadeOut 0.3s ease forwards";
     infoPanel.style.opacity = 0;
@@ -477,7 +477,7 @@ infoPanel.addEventListener("click", () => {
         infoPanel.querySelector(".info-content").style.animation = "fadeIn 0.3s ease forwards"; // reset for next open
         infoPanel.style.opacity = 1; // reset opacity for next open
     }, 300);
-});
+});*/
 
 // Example: open panel
 document.querySelector(".logo").addEventListener("click", () => {
